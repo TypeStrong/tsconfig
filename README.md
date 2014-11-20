@@ -5,7 +5,23 @@ A specification for a file format + Parser Implementation for specifying TypeScr
 Please open issues for diccussion
 
 # Specification
-Specify the project configuration in a `tsproj.yaml` / `tsproj.yml` or `tsproj.json` file in the root of your project.
+Specify the project configuration in a `tsproj.yaml` / `tsproj.yml` or `tsproj.json` file in the root of your project. The structure will be: 
+
+```ts
+interface TypeScriptProjectSpecification {
+	sources: string[];
+	target: string; // 'es3'|'es5'
+	module: string; // 'amd'|'commonjs'
+	declaration: boolean;
+	out: string;
+	outDir: string;
+	
+	projects: {
+		[projectName: string]: TypeScriptProjectSpecification;
+	}
+}
+```
+*Note:* all strings are case insensitive
 
 # Misc
 ## Inspirations 
