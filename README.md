@@ -27,4 +27,4 @@ interface TypeScriptProjectSpecification {
 ## Inspirations 
 https://github.com/fdecampredon/brackets-typescript and `grunt` configurations
 ## Why YAML
-So that you can comment your project file for the next guy. 
+So that you can comment your project file for the next dev. 
