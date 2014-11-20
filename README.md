@@ -1,10 +1,8 @@
 # tsproj
 A specification for a file format + Parser Implementation for specifying TypeScript projects
 
-# Contributing
-Please open issues for diccussion
-
 # Specification
+## Configuration file format
 Specify the project configuration in a `tsproj.yaml` / `tsproj.yml` or `tsproj.json` file in the root of your project. The structure will be: 
 
 ```ts
@@ -34,6 +32,21 @@ interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecificat
 ```
 *Note:* all strings are case insensitive.
 *Note:* `projectName` of `.main` is not allowed. Doing this so that some other application can reserve that name for caching compilation steps for a root sources. 
+*Note:* `sources` can only be on root or in the `projects` not both.
+
+## Public API
+### Interfaces
+```ts
+interface TypeScriptProjectSpecificationWithName{
+    name:string; // project name. `.main` if the anonymous root project
+}
+```
+### API
+`getProjectsForPathSync(path:string):TypeScriptProjectSpecificationWithName[]`
+Returns all the projects that have a particular path (directory or source file) in its sources.
+
+# Contributing
+Please open issues for diccussion
 
 # Misc
 ## Inspirations 
