@@ -23,7 +23,8 @@ interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecificat
 	}
 }
 ```
-*Note:* all strings are case insensitive
+*Note:* all strings are case insensitive.
+*Note:* `projectName` of `.main` is not allowed. Doing this so that some other application can reserve that name for caching compilation steps for a root sources. 
 
 # Misc
 ## Inspirations 
