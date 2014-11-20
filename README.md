@@ -15,7 +15,9 @@ interface TypeScriptProjectSpecification {
 	declaration: boolean;
 	out: string;
 	outDir: string;
-	
+}
+
+interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecification {
 	projects: {
 		[projectName: string]: TypeScriptProjectSpecification;
 	}
