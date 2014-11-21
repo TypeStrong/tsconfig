@@ -42,7 +42,7 @@ interface TypeScriptProjectSpecificationWithName{
 }
 ```
 ### API
-`getProjectSpecificationSync(pathOrSrcFile:string):TypeScriptProjectSpecificationWithName[]`
+`getProjectSpecificationsSync(pathOrSrcFile:string):TypeScriptProjectSpecificationWithName[]`
 Give an src (source file or directory) goes up the directory tree to find a project specification and then returns the parsed project specification. Use this to bootstrap the UI for what the user might want to do.
 
 `getProjectsForFileSync(path:string):TypeScriptProjectSpecificationWithName[]`
