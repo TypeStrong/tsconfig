@@ -42,8 +42,11 @@ interface TypeScriptProjectSpecificationWithName{
 }
 ```
 ### API
-`getProjectsForPathSync(path:string):TypeScriptProjectSpecificationWithName[]`
-Returns all the projects that have a particular path (directory or source file) in its sources.
+`getProjectSpecificationSync(pathOrSrcFile:string):TypeScriptProjectSpecificationWithName[]`
+Give an src (source file or directory) goes up the directory tree to find a project specification and then returns the parsed project specification. Use this to bootstrap the UI for what the user might want to do.
+
+`getProjectsForFileSync(path:string):TypeScriptProjectSpecificationWithName[]`
+Returns all the projects that have a particular source file in its sources. Use this for getting all the potential project compilations you need to run when a file changes. 
 
 # Contributing
 Please open issues for diccussion
