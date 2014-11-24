@@ -33,25 +33,10 @@ interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecificat
 ```
 *Note:* all strings are case insensitive.
 *Note:* `projectName` of `.root` is not allowed. Doing this so that some other application can reserve that name for caching compilation steps for the root sources. 
-*Note:* `sources` can only be on root or in the `projects` not both.
+*Note:* any property can be overridden by individual projects.
 
 ## Public API
-### Interfaces
-```ts
-interface TypeScriptProjectSpecificationWithName extends TypeScriptProjectSpecification {
-    name:string; // project name. `.root` if the anonymous root project
-}
-```
-### API
-`getProjectsSync(pathOrSrcFile:string):TypeScriptProjectSpecificationWithName[]`
-Given an src (source file or directory) goes up the directory tree to find a project specification and then returns the parsed project specification. Use this to bootstrap the UI for what the user might want to do.
-
-`getProjectsForFileSync(path:string):TypeScriptProjectSpecificationWithName[]`
-Returns all the projects that have a particular source file in its sources. Use this for getting all the potential project compilations you need to run when a file changes. 
-
-`createRootProjectSync(pathOrSrcFile,spec?:TypeScriptProjectSpecification)` 
-Creates a project at the specified path (or source file location). Defaults are assumed unless overriden by the optional spec. For `sources` the default of `./**/*.ts` is assumed.
-
+See `index.ts`. API exists for querying the project file, querying the projects relevant for single TypeScript file and creating a new project file.
 
 # Contributing
 Please open issues for diccussion

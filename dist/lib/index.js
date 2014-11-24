@@ -1,10 +1,16 @@
 function getProjectsSync(pathOrSrcFile) {
-    return [];
+    return {
+        projectFilePath: '',
+        projects: []
+    };
 }
 exports.getProjectsSync = getProjectsSync;
 
 function getProjectsForFileSync(path) {
-    return [];
+    return {
+        projectFilePath: '',
+        projects: []
+    };
 }
 exports.getProjectsForFileSync = getProjectsForFileSync;
 
