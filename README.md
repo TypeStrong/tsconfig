@@ -7,38 +7,39 @@ Specify the project configuration in a `tsproj.yaml` / `tsproj.yml` or `tsproj.j
 
 ```ts
 interface TypeScriptProjectSpecification {
-	sources: string[];         // An array of 'minimatch` patterns to specify source files  
+	sources?: string[];         // An array of 'minimatch` patterns to specify source files  
 	
-	target: string;            // 'es3'|'es5'
-	module: string;            // 'amd'|'commonjs'
+	target?: string;            // 'es3'|'es5'
+	module?: string;            // 'amd'|'commonjs'
 	
-	declaration: boolean;      // Generates corresponding `.d.ts` file
-	out: string;               // Concatenate and emit a single file
-	outDir: string;            // Redirect output structure to this directory
+	declaration?: boolean;      // Generates corresponding `.d.ts` file
+	out?: string;               // Concatenate and emit a single file
+	outDir?: string;            // Redirect output structure to this directory
 	
-	noImplicitAny: boolean;    // Error on inferred `any` type
-	removeComments: boolean;   // Do not emit comments in output
+	noImplicitAny?: boolean;    // Error on inferred `any` type
+	removeComments?: boolean;   // Do not emit comments in output
 		
-	sourceMap: boolean;        // Generates SourceMaps (.map files)
-	sourceRoot: string;        // Optionally specifies the location where debugger should locate TypeScript source files after deployment
-	mapRoot: string;           // Optionally Specifies the location where debugger should locate map files after deployment
+	sourceMap?: boolean;        // Generates SourceMaps (.map files)
+	sourceRoot?: string;        // Optionally specifies the location where debugger should locate TypeScript source files after deployment
+	mapRoot?: string;           // Optionally Specifies the location where debugger should locate map files after deployment
 }
 
+// Main configuration
 interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecification {
-	projects: {
+	projects?: {
 		[projectName: string]: TypeScriptProjectSpecification;
 	}
 }
 ```
 *Note:* all strings are case insensitive.
-*Note:* `projectName` of `.main` is not allowed. Doing this so that some other application can reserve that name for caching compilation steps for a root sources. 
+*Note:* `projectName` of `.root` is not allowed. Doing this so that some other application can reserve that name for caching compilation steps for the root sources. 
 *Note:* `sources` can only be on root or in the `projects` not both.
 
 ## Public API
 ### Interfaces
 ```ts
-interface TypeScriptProjectSpecificationWithName{
-    name:string; // project name. `.main` if the anonymous root project
+interface TypeScriptProjectSpecificationWithName extends TypeScriptProjectSpecification {
+    name:string; // project name. `.root` if the anonymous root project
 }
 ```
 ### API
@@ -47,6 +48,10 @@ Given an src (source file or directory) goes up the directory tree to find a pro
 
 `getProjectsForFileSync(path:string):TypeScriptProjectSpecificationWithName[]`
 Returns all the projects that have a particular source file in its sources. Use this for getting all the potential project compilations you need to run when a file changes. 
+
+`createRootProject(pathOrSrcFile,spec?:TypeScriptProjectSpecification)` 
+Creates a project at the specified path (or source file location). Defaults are assumed unless overriden by the optional spec. For `sources` the default of `./**/*.ts` is assumed.
+
 
 # Contributing
 Please open issues for diccussion
