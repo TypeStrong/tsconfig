@@ -1,4 +1,4 @@
-/// <reference path="./typings/tsd.d.ts"/>
+/// <reference path="../typings/vendor.d.ts"/>
 /// <reference path="./interfaces.d.ts"/>
 
 import fs = require("fs");
