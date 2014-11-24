@@ -3,7 +3,7 @@ A specification for a file format + Parser Implementation for specifying TypeScr
 
 # Specification
 ## Configuration file format
-Specify the project configuration in a `tsproj.yaml` / `tsproj.yml` or `tsproj.json` file in the root of your project. The structure will be: 
+Specify the project configuration in a `tsproj.yml` file in the root of your project. The structure will be specified using the interface `TypeScriptProjectRootSpecification`: 
 
 ```ts
 interface TypeScriptProjectSpecification {
