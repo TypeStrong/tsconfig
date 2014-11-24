@@ -10,6 +10,7 @@ var projectFileName = 'tsproj.yml'
 /** Given an src (source file or directory) goes up the directory tree to find all the project specifications that are impacted and then returns the parsed project specification. Use this to bootstrap the UI for what the user might want to do. */
 export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDetails {
 
+    console.log(pathOrSrcFile);
     if (!fs.existsSync(pathOrSrcFile))
         throw new Error('Invalid Path');
 
@@ -18,11 +19,20 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
 
     // Keep going up till we find the project file 
     var projectFile = '';
+    while (fs.existsSync(dir)) { // while directory exists
 
-    
+        var potentialProjectFile = dir + '/' + projectFileName;
+        if (fs.existsSync(potentialProjectFile)) { // found it
+            projectFile = potentialProjectFile;
+        }
+        else { // go up
+            dir = path.dirname(dir);
+        }
+
+    }
 
     return {
-        projectFilePath: '',
+        projectFilePath: projectFileName,
         projects: []
     };
 }

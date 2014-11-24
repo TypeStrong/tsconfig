@@ -2,31 +2,30 @@
 
 import main = require('../lib/index');
 import chai = require('chai');
+import path = require('path');
 
-var pathToTestProjects = '../../testprojects/';
-
-
+var pathToTestProjects = path.resolve(path.join(__dirname, '../../testprojects/'));
 
 describe(main.getProjectsSync.name, () => {
 
 
-    //var expectedProjectRoots: {
-    //    name: string;
-    //    testPath: string;
-    //    expected: TypeScriptProjectFile[];
-    //}[] = [
-    //        {
-    //            name: 'dual',
+    var expectedProjectFileDetails: {
+        testPath: string;
+        expected: TypeScriptProjectFileDetails;
+    }[] = [
+            {
+                testPath: pathToTestProjects + 'dual/src/foo.ts',
+                expected: {
+                    projectFilePath: '',
+                    projects: []
+                }
+            }
+        ];
 
-    //            testPath: '/src/foo.ts',
-    //            expected: [
-    //                name: 'web',
-    //                sources: ''
-    //            ]
-    //        }
-    //    ];
-
-    it('should pass', () => {
-        chai.assert.deepEqual({name:123}, {name:123});
-    })
+    it('Expected results should match', () => {
+        expectedProjectFileDetails.forEach((test) => {
+            var result = main.getProjectsSync(test.testPath);
+            chai.assert.deepEqual(result, test.expected);
+        });
+    });
 });
