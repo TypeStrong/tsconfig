@@ -1,0 +1,28 @@
+{
+  "name": "tsproj",
+  "version": "0.0.0",
+  "description": "TypeScript project file specification + implementation",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeStrong/tsproj.git"
+  },
+  "keywords": [
+    "TypeScript",
+    "compiler"
+  ],
+  "author": "basaratali@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TypeStrong/tsproj/issues"
+  },
+  "homepage": "https://github.com/TypeStrong/tsproj",
+  "dependencies": {    
+  }
+}

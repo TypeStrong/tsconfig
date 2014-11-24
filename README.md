@@ -49,7 +49,7 @@ Given an src (source file or directory) goes up the directory tree to find a pro
 `getProjectsForFileSync(path:string):TypeScriptProjectSpecificationWithName[]`
 Returns all the projects that have a particular source file in its sources. Use this for getting all the potential project compilations you need to run when a file changes. 
 
-`createRootProject(pathOrSrcFile,spec?:TypeScriptProjectSpecification)` 
+`createRootProjectSync(pathOrSrcFile,spec?:TypeScriptProjectSpecification)` 
 Creates a project at the specified path (or source file location). Defaults are assumed unless overriden by the optional spec. For `sources` the default of `./**/*.ts` is assumed.
 
 
