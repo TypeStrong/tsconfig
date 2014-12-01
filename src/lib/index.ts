@@ -32,9 +32,14 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
             if (dir == before) throw new Error('No Project Found');
         }
     }
+    projectFile = path.normalize(projectFile);
+
+    // We now have a valid projectFile. Parse it: 
+    var parsedProjectSpec = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
+    // console.log(parsedProjectSpec);
 
     return {
-        projectFilePath: path.normalize(projectFile),
+        projectFilePath: projectFile,
         projects: []
     };
 }

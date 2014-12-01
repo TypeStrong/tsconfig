@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var yaml = require('js-yaml');
 
 var projectFileName = 'tsproj.yml';
 
@@ -23,9 +24,12 @@ function getProjectsSync(pathOrSrcFile) {
                 throw new Error('No Project Found');
         }
     }
+    projectFile = path.normalize(projectFile);
+
+    var parsedProjectSpec = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
 
     return {
-        projectFilePath: path.normalize(projectFile),
+        projectFilePath: projectFile,
         projects: []
     };
 }

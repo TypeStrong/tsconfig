@@ -34,7 +34,9 @@ describe(main.getProjectsSync.name, () => {
                 testPath: pathToTestProjects + '/noproject/foo.ts',
                 expectedFailureMessage: 'No Project Found'
             }
-        ]
+    ]
+
+    // TODO: invalid yaml : YAMLException
 
     it('Expected results should match', () => {
         expectedProjectFileDetails.forEach((test) => {
