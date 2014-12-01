@@ -22,10 +22,25 @@ describe(main.getProjectsSync.name, () => {
             }
         ];
 
+    var failOnThese: {
+        testPath: string;
+        expectedFailureMessage: string
+    }[] = [
+            {
+                testPath: 'some/dumb/path',
+                expectedFailureMessage: 'Invalid Path'
+            }
+        ]
+
     it('Expected results should match', () => {
         expectedProjectFileDetails.forEach((test) => {
-            var result = main.getProjectsSync(test.testPath);
-            chai.assert.deepEqual(result, test.expected);
+            chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
+        });
+    });
+
+    it('Fail gracefully', () => {
+        failOnThese.forEach((test) => {
+            chai.assert.throws(() => main.getProjectsSync(test.testPath), test.expectedFailureMessage);
         });
     });
 });

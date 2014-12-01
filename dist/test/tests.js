@@ -15,10 +15,24 @@ describe(main.getProjectsSync.name, function () {
         }
     ];
 
+    var failOnThese = [
+        {
+            testPath: 'some/dumb/path',
+            expectedFailureMessage: 'Invalid Path'
+        }
+    ];
+
     it('Expected results should match', function () {
         expectedProjectFileDetails.forEach(function (test) {
-            var result = main.getProjectsSync(test.testPath);
-            chai.assert.deepEqual(result, test.expected);
+            chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
+        });
+    });
+
+    it('Fail gracefully', function () {
+        failOnThese.forEach(function (test) {
+            chai.assert.throws(function () {
+                return main.getProjectsSync(test.testPath);
+            }, test.expectedFailureMessage);
         });
     });
 });
