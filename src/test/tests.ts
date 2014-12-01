@@ -4,7 +4,7 @@ import main = require('../lib/index');
 import chai = require('chai');
 import path = require('path');
 
-var pathToTestProjects = path.resolve(path.join(__dirname, '../../testprojects/'));
+var pathToTestProjects = path.normalize(path.join(__dirname, '../../testprojects/'));
 
 describe(main.getProjectsSync.name, () => {
 
@@ -14,9 +14,9 @@ describe(main.getProjectsSync.name, () => {
         expected: TypeScriptProjectFileDetails;
     }[] = [
             {
-                testPath: pathToTestProjects + 'dual/src/foo.ts',
+                testPath: pathToTestProjects + '/dual/src/foo.ts',
                 expected: {
-                    projectFilePath: '',
+                    projectFilePath: path.normalize(pathToTestProjects + '/dual/tsproj.yml'),
                     projects: []
                 }
             }

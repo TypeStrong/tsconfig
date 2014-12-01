@@ -2,14 +2,14 @@ var main = require('../lib/index');
 var chai = require('chai');
 var path = require('path');
 
-var pathToTestProjects = path.resolve(path.join(__dirname, '../../testprojects/'));
+var pathToTestProjects = path.normalize(path.join(__dirname, '../../testprojects/'));
 
 describe(main.getProjectsSync.name, function () {
     var expectedProjectFileDetails = [
         {
-            testPath: pathToTestProjects + 'dual/src/foo.ts',
+            testPath: pathToTestProjects + '/dual/src/foo.ts',
             expected: {
-                projectFilePath: '',
+                projectFilePath: path.normalize(pathToTestProjects + '/dual/tsproj.yml'),
                 projects: []
             }
         }
