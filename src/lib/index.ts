@@ -26,7 +26,10 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
             break;
         }
         else { // go up
+            var before = dir;
             dir = path.dirname(dir);
+            // At root: 
+            if (dir == before) throw new Error('No Project Found');
         }
     }
 

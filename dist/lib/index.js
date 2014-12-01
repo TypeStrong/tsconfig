@@ -16,7 +16,11 @@ function getProjectsSync(pathOrSrcFile) {
             projectFile = potentialProjectFile;
             break;
         } else {
+            var before = dir;
             dir = path.dirname(dir);
+
+            if (dir == before)
+                throw new Error('No Project Found');
         }
     }
 

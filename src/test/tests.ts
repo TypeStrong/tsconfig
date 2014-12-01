@@ -29,6 +29,10 @@ describe(main.getProjectsSync.name, () => {
             {
                 testPath: 'some/dumb/path',
                 expectedFailureMessage: 'Invalid Path'
+            },
+            {
+                testPath: pathToTestProjects + '/noproject/foo.ts',
+                expectedFailureMessage: 'No Project Found'
             }
         ]
 
