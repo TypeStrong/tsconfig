@@ -23,6 +23,10 @@ describe(main.getProjectsSync.name, function () {
         {
             testPath: pathToTestProjects + '/noproject/foo.ts',
             expectedFailureMessage: 'No Project Found'
+        },
+        {
+            testPath: pathToTestProjects + '/invalidfile',
+            expectedFailureMessage: 'Invalid YAML'
         }
     ];
 

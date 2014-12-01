@@ -27,6 +27,8 @@ function getProjectsSync(pathOrSrcFile) {
     projectFile = path.normalize(projectFile);
 
     var parsedProjectSpec = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
+    if (typeof parsedProjectSpec == "string")
+        throw new Error("Invalid YAML");
 
     return {
         projectFilePath: projectFile,
