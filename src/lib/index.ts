@@ -36,7 +36,9 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
 
     // We now have a valid projectFile. Parse it: 
     var parsedProjectSpec = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
-    if (typeof parsedProjectSpec == "string") throw new Error("Invalid YAML")
+    if (typeof parsedProjectSpec == "string") throw new Error("Invalid YAML");
+
+    // TODO: continue parsing and validating
 
     return {
         projectFilePath: projectFile,
