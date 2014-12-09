@@ -1,5 +1,6 @@
 # tsproj
 [![Build Status](https://secure.travis-ci.org/TypeStrong/tsproj.svg?branch=master)](http://travis-ci.org/TypeStrong/tsproj)
+
 A specification for a file format + Parser Implementation for specifying TypeScript projects
 
 # Specification
