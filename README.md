@@ -41,10 +41,12 @@ interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecificat
 See `index.ts`. API exists for querying the project file, querying the projects relevant for single TypeScript file and creating a new project file.
 
 # Contributing
-Please open issues for diccussion
+Please open issues for discussion.
 
 # Misc
 ## Inspirations 
-https://github.com/fdecampredon/brackets-typescript and `grunt` configurations
+https://github.com/fdecampredon/brackets-typescript and `grunt` configurations. 
+
+Differences: removed the confusion around "target vs. task" options in grunt (here all options are overridable) and root sources in brackets-ts (here defaults are called `defaults`, do not participate in compilation and serve only to seed properties including sources to various projects). 
 ## Why YAML
 So that you can comment your project file for the next dev. 
