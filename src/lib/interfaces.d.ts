@@ -31,6 +31,6 @@ interface TypeScriptProjectSpecificationParsed extends TypeScriptProjectSpecific
 }
 
 interface TypeScriptProjectFileDetails {
-    projectFilePath: string; // The path to the project file
+    projectFileDirectory: string; // The path to the project file
     projects: TypeScriptProjectSpecificationParsed[];
 }

@@ -18,12 +18,12 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
     var dir = fs.lstatSync(pathOrSrcFile).isDirectory() ? pathOrSrcFile : path.dirname(pathOrSrcFile);
 
     // Keep going up till we find the project file 
-    var projectFilePath = '';
+    var projectFile = '';
     while (fs.existsSync(dir)) { // while directory exists
 
         var potentialProjectFile = dir + '/' + projectFileName;
         if (fs.existsSync(potentialProjectFile)) { // found it
-            projectFilePath = potentialProjectFile;
+            projectFile = potentialProjectFile;
             break;
         }
         else { // go up
@@ -33,10 +33,10 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
             if (dir == before) throw new Error('No Project Found');
         }
     }
-    projectFilePath = path.normalize(projectFilePath);
+    projectFile = path.normalize(projectFile);
 
     // We now have a valid projectFile. Parse it: 
-    var parsedProjectSpecFile = yaml.safeLoad(fs.readFileSync(projectFilePath, 'utf8'));
+    var parsedProjectSpecFile = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
     if (typeof parsedProjectSpecFile == "string") throw new Error("Invalid YAML");
     if (parsedProjectSpecFile.projects == void 0) throw new Error("The root of the YAML file must be 'projects'");
 
@@ -63,7 +63,7 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
 
         project.name = projectSpecName;
         // Use grunt.file.expand type of logic
-        var cwdPath = path.relative(process.cwd(), path.dirname(projectFilePath));
+        var cwdPath = path.relative(process.cwd(), path.dirname(projectFile));
         project.expandedSources = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.sources);
 
         // TODO: Validating
@@ -84,16 +84,30 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
     });
 
     return {
-        projectFilePath: projectFilePath,
+        projectFileDirectory: path.dirname(projectFile) + path.sep,
         projects: projects
     };
 }
 
 /** Returns all the projects that have a particular source file in its sources. Use this for getting all the potential project compilations you need to run when a file changes. */
-export function getProjectsForFileSync(path: string): TypeScriptProjectFileDetails {
+export function getProjectsForFileSync(file: string): TypeScriptProjectFileDetails {
+    // First we get all the projects for path: 
+    var projects = getProjectsSync(file);
+    var foundProjects: TypeScriptProjectSpecificationParsed[] = [];
+
+    // See if this path is in any of the expanded sources
+    projects.projects.forEach(project => {
+        if (project.expandedSources.some(expandedPath => {
+            if (path.normalize(projects.projectFileDirectory + expandedPath) == path.normalize(file))
+                return true;
+        })) {
+            foundProjects.push(project);
+        }
+    });
+
     return {
-        projectFilePath: '',
-        projects: []
+        projectFileDirectory: projects.projectFileDirectory,
+        projects: foundProjects
     };
 }
 

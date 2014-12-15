@@ -2,8 +2,10 @@ projects:
     web: 
         module: amd
         sources: 
-            - ./**/*.ts
+            - ./src/**/*.ts
+            - ./webonly/**/*.ts
+
     node:
         module: commonjs
         sources: 
-            - ./**/*.ts
+            - ./src/**/*.ts            

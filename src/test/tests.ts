@@ -17,19 +17,21 @@ describe(main.getProjectsSync.name, () => {
             {
                 testPath: pathToTestProjects + '/dual/src/foo.ts',
                 expected: {
-                    projectFilePath: path.normalize(pathToTestProjects + '/dual/tsproj.yml'),
+                    projectFileDirectory: path.normalize(pathToTestProjects + '/dual/'),
                     projects: [
                         {
                             "name": "web",
                             "declaration": false,
                             "expandedSources": [
-                                "./src/foo.ts"
+                                "./src/foo.ts",
+                                "./webonly/bar.ts"
                             ],
                             "module": "amd",
                             "noImplicitAny": false,
                             "removeComments": true,
                             "sources": [
-                                "./**/*.ts"
+                                "./src/**/*.ts",
+                                "./webonly/**/*.ts"
                             ],
                             sourceMap: false,
                             "target": "es5",
@@ -44,7 +46,7 @@ describe(main.getProjectsSync.name, () => {
                             "noImplicitAny": false,
                             "removeComments": true,
                             "sources": [
-                                "./**/*.ts"
+                                "./src/**/*.ts",
                             ],
                             sourceMap: false,
                             "target": "es5"
@@ -85,4 +87,85 @@ describe(main.getProjectsSync.name, () => {
             chai.assert.throws(() => main.getProjectsSync(test.testPath), test.expectedFailureMessage);
         });
     });
+});
+
+
+describe(main.getProjectsForFileSync.name, () => {
+    var expectedProjectFileDetails: {
+        testPath: string;
+        expected: TypeScriptProjectFileDetails;
+    }[] = [
+            {
+                testPath: pathToTestProjects + '/dual/src/foo.ts',
+                expected: {
+                    projectFileDirectory: path.normalize(pathToTestProjects + '/dual/'),
+                    projects: [
+                        {
+                            "name": "web",
+                            "declaration": false,
+                            "expandedSources": [
+                                "./src/foo.ts",
+                                "./webonly/bar.ts"
+                            ],
+                            "module": "amd",
+                            "noImplicitAny": false,
+                            "removeComments": true,
+                            "sources": [
+                                "./src/**/*.ts",
+                                "./webonly/**/*.ts"
+                            ],
+                            sourceMap: false,
+                            "target": "es5",
+                        },
+                        {
+                            "name": "node",
+                            "declaration": false,
+                            "expandedSources": [
+                                "./src/foo.ts"
+                            ],
+                            "module": "commonjs",
+                            "noImplicitAny": false,
+                            "removeComments": true,
+                            "sources": [
+                                "./src/**/*.ts",
+                            ],
+                            sourceMap: false,
+                            "target": "es5"
+                        }
+                    ]
+                }
+            },
+            {
+                testPath: pathToTestProjects + '/dual/webonly/bar.ts',
+                expected: {
+                    projectFileDirectory: path.normalize(pathToTestProjects + '/dual/'),
+                    projects: [
+                        {
+                            "name": "web",
+                            "declaration": false,
+                            "expandedSources": [
+                                "./src/foo.ts",
+                                "./webonly/bar.ts"
+                            ],
+                            "module": "amd",
+                            "noImplicitAny": false,
+                            "removeComments": true,
+                            "sources": [
+                                "./src/**/*.ts",
+                                "./webonly/**/*.ts"
+                            ],
+                            sourceMap: false,
+                            "target": "es5",
+                        }
+                    ]
+                }
+            }
+        ];
+
+    it('Expected results should match', () => {
+        expectedProjectFileDetails.forEach((test) => {
+            chai.assert.deepEqual(main.getProjectsForFileSync(test.testPath), test.expected);
+        });
+    });
+
 });

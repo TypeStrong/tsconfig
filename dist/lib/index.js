@@ -7,11 +7,11 @@ function getProjectsSync(pathOrSrcFile) {
     if (!fs.existsSync(pathOrSrcFile))
         throw new Error('Invalid Path');
     var dir = fs.lstatSync(pathOrSrcFile).isDirectory() ? pathOrSrcFile : path.dirname(pathOrSrcFile);
-    var projectFilePath = '';
+    var projectFile = '';
     while (fs.existsSync(dir)) {
         var potentialProjectFile = dir + '/' + projectFileName;
         if (fs.existsSync(potentialProjectFile)) {
-            projectFilePath = potentialProjectFile;
+            projectFile = potentialProjectFile;
             break;
         }
         else {
@@ -21,8 +21,8 @@ function getProjectsSync(pathOrSrcFile) {
                 throw new Error('No Project Found');
         }
     }
-    projectFilePath = path.normalize(projectFilePath);
-    var parsedProjectSpecFile = yaml.safeLoad(fs.readFileSync(projectFilePath, 'utf8'));
+    projectFile = path.normalize(projectFile);
+    var parsedProjectSpecFile = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
     if (typeof parsedProjectSpecFile == "string")
         throw new Error("Invalid YAML");
     if (parsedProjectSpecFile.projects == void 0)
@@ -43,7 +43,7 @@ function getProjectsSync(pathOrSrcFile) {
         var projectSpec = projectSpecs[projectSpecName];
         var project = {};
         project.name = projectSpecName;
-        var cwdPath = path.relative(process.cwd(), path.dirname(projectFilePath));
+        var cwdPath = path.relative(process.cwd(), path.dirname(projectFile));
         project.expandedSources = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.sources);
         project.sources = projectSpec.sources;
         project.target = projectSpec.target || 'es5';
@@ -59,15 +59,25 @@ function getProjectsSync(pathOrSrcFile) {
         projects.push(project);
     });
     return {
-        projectFilePath: projectFilePath,
+        projectFileDirectory: path.dirname(projectFile) + path.sep,
         projects: projects
     };
 }
 exports.getProjectsSync = getProjectsSync;
-function getProjectsForFileSync(path) {
+function getProjectsForFileSync(file) {
+    var projects = getProjectsSync(file);
+    var foundProjects = [];
+    projects.projects.forEach(function (project) {
+        if (project.expandedSources.some(function (expandedPath) {
+            if (path.normalize(projects.projectFileDirectory + expandedPath) == path.normalize(file))
+                return true;
+        })) {
+            foundProjects.push(project);
+        }
+    });
     return {
-        projectFilePath: '',
-        projects: []
+        projectFileDirectory: projects.projectFileDirectory,
+        projects: foundProjects
     };
 }
 exports.getProjectsForFileSync = getProjectsForFileSync;
