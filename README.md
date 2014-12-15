@@ -43,6 +43,9 @@ See `index.ts`. API exists for querying the project file, querying the projects 
 # Contributing
 Please open issues for discussion.
 
+# Sample projects
+Please see the valid projects folder : https://github.com/TypeStrong/tsproj/tree/master/testprojects/valid
+
 # Misc
 ## Inspirations 
 https://github.com/fdecampredon/brackets-typescript and `grunt` configurations. 
