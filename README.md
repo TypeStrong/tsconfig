@@ -37,14 +37,13 @@ interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecificat
 *Note:* `defaults` are not required and should not participate in compilation. If you don't have `projects` then your configuration is invalid.<br>
 *Note:* any `default` property can be overridden by individual projects.<br>
 
+Please see the valid projects folder : https://github.com/TypeStrong/tsproj/tree/master/testprojects/valid
+
 ## Public API
 See `index.ts`. API exists for querying the project file, querying the projects relevant for single TypeScript file and creating a new project file.
 
 # Contributing
 Please open issues for discussion.
-
-# Sample projects
-Please see the valid projects folder : https://github.com/TypeStrong/tsproj/tree/master/testprojects/valid
 
 # Misc
 ## Inspirations 
