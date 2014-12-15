@@ -1,9 +1,7 @@
 var main = require('../lib/index');
 var chai = require('chai');
 var path = require('path');
-
 var pathToTestProjects = path.normalize(path.join(__dirname, '../../testprojects/'));
-
 describe(main.getProjectsSync.name, function () {
     var expectedProjectFileDetails = [
         {
@@ -23,7 +21,8 @@ describe(main.getProjectsSync.name, function () {
                         "sources": [
                             "./**/*.ts"
                         ],
-                        "target": "es5"
+                        sourceMap: false,
+                        "target": "es5",
                     },
                     {
                         "name": "node",
@@ -37,13 +36,13 @@ describe(main.getProjectsSync.name, function () {
                         "sources": [
                             "./**/*.ts"
                         ],
+                        sourceMap: false,
                         "target": "es5"
                     }
                 ]
             }
         }
     ];
-
     var failOnThese = [
         {
             testPath: 'some/dumb/path',
@@ -56,20 +55,16 @@ describe(main.getProjectsSync.name, function () {
         {
             testPath: pathToTestProjects + '/invalidfile',
             expectedFailureMessage: 'Invalid YAML'
-        }
+        },
     ];
-
-    it.only('Expected results should match', function () {
+    it('Expected results should match', function () {
         expectedProjectFileDetails.forEach(function (test) {
             chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
         });
     });
-
     it('Fail gracefully', function () {
         failOnThese.forEach(function (test) {
-            chai.assert.throws(function () {
-                return main.getProjectsSync(test.testPath);
-            }, test.expectedFailureMessage);
+            chai.assert.throws(function () { return main.getProjectsSync(test.testPath); }, test.expectedFailureMessage);
         });
     });
 });

@@ -76,7 +76,7 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
         runWithDefault(val => project.outDir = val, projectSpec.outDir);
         project.noImplicitAny = projectSpec.noImplicitAny == void 0 ? false : projectSpec.noImplicitAny;
         project.removeComments = projectSpec.removeComments == void 0 ? true : projectSpec.removeComments;
-        runWithDefault(val => project.sourceMap = val, projectSpec.sourceMap);
+        runWithDefault(val => project.sourceMap = val, projectSpec.sourceMap, false);
         runWithDefault(val => project.sourceRoot = val, projectSpec.sourceRoot);
         runWithDefault(val => project.mapRoot = val, projectSpec.mapRoot);
 

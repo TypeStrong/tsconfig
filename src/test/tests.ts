@@ -31,6 +31,7 @@ describe(main.getProjectsSync.name, () => {
                             "sources": [
                                 "./**/*.ts"
                             ],
+                            sourceMap: false,
                             "target": "es5",
                         },
                         {
@@ -45,6 +46,7 @@ describe(main.getProjectsSync.name, () => {
                             "sources": [
                                 "./**/*.ts"
                             ],
+                            sourceMap: false,
                             "target": "es5"
                         }
                     ]
@@ -72,7 +74,7 @@ describe(main.getProjectsSync.name, () => {
         ];
 
 
-    it.only('Expected results should match', () => {
+    it('Expected results should match', () => {
         expectedProjectFileDetails.forEach((test) => {
             chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
         });
