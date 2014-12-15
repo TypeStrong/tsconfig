@@ -26,25 +26,15 @@ function getProjectsSync(pathOrSrcFile) {
     if (typeof parsedProjectSpecFile == "string")
         throw new Error("Invalid YAML");
     if (parsedProjectSpecFile.projects == void 0)
-        throw new Error("The root of the YAML file must be 'projects'");
-    var projectSpecs = parsedProjectSpecFile.projects;
+        throw new Error("Project file must have a 'projects' section");
+    var validPropertyNames = ['sources', 'target', 'module', 'declaration', 'out', 'outDir', 'noImplicitAny', 'removeComments', 'sourceMap', 'sourceRoot', 'mapRoot'];
     var projects = [];
-    function runWithDefault(run, val, def) {
-        if (val == void 0) {
-            if (def != void 0) {
-                run(def);
-            }
-        }
-        else {
-            run(val);
-        }
-    }
-    Object.keys(projectSpecs).forEach(function (projectSpecName) {
-        var projectSpec = projectSpecs[projectSpecName];
+    var defaults = {};
+    function parseProject(name, projectSpec) {
         var project = {};
-        project.name = projectSpecName;
+        project.name = name;
         var cwdPath = path.relative(process.cwd(), path.dirname(projectFile));
-        project.expandedSources = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.sources);
+        project.expandedSources = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.sources || []);
         project.sources = projectSpec.sources;
         project.target = projectSpec.target || 'es5';
         project.module = projectSpec.module || 'commonjs';
@@ -56,8 +46,20 @@ function getProjectsSync(pathOrSrcFile) {
         runWithDefault(function (val) { return project.sourceMap = val; }, projectSpec.sourceMap, false);
         runWithDefault(function (val) { return project.sourceRoot = val; }, projectSpec.sourceRoot);
         runWithDefault(function (val) { return project.mapRoot = val; }, projectSpec.mapRoot);
-        projects.push(project);
-    });
+        return project;
+    }
+    if (parsedProjectSpecFile.defaults) {
+        defaults = parseProject('defaults', parsedProjectSpecFile.defaults);
+    }
+    if (parsedProjectSpecFile.projects != void 0) {
+        var projectSpecs = parsedProjectSpecFile.projects;
+        Object.keys(projectSpecs).forEach(function (projectSpecName) {
+            var projectSpec = projectSpecs[projectSpecName];
+            projectSpec = extend(defaults, projectSpec);
+            var parsed = parseProject(projectSpecName, projectSpec);
+            projects.push(parsed);
+        });
+    }
     return {
         projectFileDirectory: path.dirname(projectFile) + path.sep,
         projects: projects
@@ -85,3 +87,33 @@ function createRootProjectSync(pathOrSrcFile, spec) {
     return;
 }
 exports.createRootProjectSync = createRootProjectSync;
+function runWithDefault(run, val, def) {
+    if (val == void 0) {
+        if (def != void 0) {
+            run(def);
+        }
+    }
+    else {
+        run(val);
+    }
+}
+function extend(obj) {
+    var args = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        args[_i - 1] = arguments[_i];
+    }
+    var source, prop, ret = {};
+    for (var p in obj) {
+        ret[p] = obj[p];
+    }
+    for (var i = 1, length = arguments.length; i < length; i++) {
+        source = arguments[i];
+        for (prop in source) {
+            if (source.hasOwnProperty(prop)) {
+                ret[prop] = source[prop];
+            }
+        }
+    }
+    return ret;
+}
+;

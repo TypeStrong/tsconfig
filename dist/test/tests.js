@@ -43,7 +43,53 @@ describe(main.getProjectsSync.name, function () {
                     }
                 ]
             }
-        }
+        },
+        {
+            testPath: pathToTestProjects + '/defaults/src/foo.ts',
+            expected: {
+                projectFileDirectory: path.normalize(pathToTestProjects + '/defaults/'),
+                projects: [
+                    {
+                        "name": "web",
+                        "declaration": false,
+                        "expandedSources": [
+                            "./src/foo.ts",
+                        ],
+                        "module": "amd",
+                        "noImplicitAny": false,
+                        "removeComments": true,
+                        "sources": [
+                            "./src/**/*.ts",
+                        ],
+                        sourceMap: false,
+                        "target": "es5",
+                    },
+                ]
+            }
+        },
+        {
+            testPath: pathToTestProjects + '/rootdefaults/src/foo.ts',
+            expected: {
+                projectFileDirectory: path.normalize(pathToTestProjects + '/rootdefaults/'),
+                projects: [
+                    {
+                        "name": "web",
+                        "declaration": false,
+                        "expandedSources": [
+                            "./src/foo.ts",
+                        ],
+                        "module": "amd",
+                        "noImplicitAny": false,
+                        "removeComments": true,
+                        "sources": [
+                            "./src/**/*.ts",
+                        ],
+                        sourceMap: false,
+                        "target": "es5",
+                    },
+                ]
+            }
+        },
     ];
     var failOnThese = [
         {
@@ -57,6 +103,10 @@ describe(main.getProjectsSync.name, function () {
         {
             testPath: pathToTestProjects + '/invalidfile',
             expectedFailureMessage: 'Invalid YAML'
+        },
+        {
+            testPath: pathToTestProjects + '/invalidfilenoprojects/src',
+            expectedFailureMessage: "Project file must have a 'projects' section"
         },
     ];
     it('Expected results should match', function () {

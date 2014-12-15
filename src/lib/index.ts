@@ -36,35 +36,24 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
     projectFile = path.normalize(projectFile);
 
     // We now have a valid projectFile. Parse it: 
-    var parsedProjectSpecFile = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
+    var parsedProjectSpecFile: TypeScriptProjectRootSpecification = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
     if (typeof parsedProjectSpecFile == "string") throw new Error("Invalid YAML");
-    if (parsedProjectSpecFile.projects == void 0) throw new Error("The root of the YAML file must be 'projects'");
+    if (parsedProjectSpecFile.projects == void 0) throw new Error("Project file must have a 'projects' section");
 
-    var projectSpecs = parsedProjectSpecFile.projects;
+    // TODO: use these
+    var validPropertyNames = ['sources', 'target', 'module', 'declaration', 'out', 'outDir', 'noImplicitAny', 'removeComments', 'sourceMap', 'sourceRoot', 'mapRoot'];
+
+    // Setup for projects and root
     var projects: TypeScriptProjectSpecificationParsed[] = [];
+    var defaults: TypeScriptProjectSpecificationParsed = <any>{};
 
-    /** Run with default if no val given or run with val */
-    function runWithDefault<T>(run: (val: T) => any, val: T, def?: T) {
-        // no val
-        if (val == void 0) {
-            if (def != void 0) {
-                run(def);
-            }
-        }
-        else {
-            run(val);
-        }
-    }
-
-    // For each key in parsedProjectSpec (project) we load the details. 
-    Object.keys(projectSpecs).forEach((projectSpecName) => {
-        var projectSpec: TypeScriptProjectSpecification = projectSpecs[projectSpecName];
+    // Utility to add to projects
+    function parseProject(name: string, projectSpec: TypeScriptProjectSpecification): TypeScriptProjectSpecificationParsed {
         var project: TypeScriptProjectSpecificationParsed = <any>{};
-
-        project.name = projectSpecName;
+        project.name = name;
         // Use grunt.file.expand type of logic
         var cwdPath = path.relative(process.cwd(), path.dirname(projectFile));
-        project.expandedSources = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.sources);
+        project.expandedSources = expand({ filter: 'isFile', cwd: cwdPath }, projectSpec.sources || []);
 
         // TODO: Validating
         // Setup with defaults: 
@@ -80,8 +69,27 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
         runWithDefault(val => project.sourceRoot = val, projectSpec.sourceRoot);
         runWithDefault(val => project.mapRoot = val, projectSpec.mapRoot);
 
-        projects.push(project);
-    });
+        return project;
+    }
+
+    // Load defaults
+    if (parsedProjectSpecFile.defaults) {
+        defaults = parseProject('defaults', parsedProjectSpecFile.defaults);
+    }
+
+    // Load sub projects
+    if (parsedProjectSpecFile.projects != void 0) {
+        var projectSpecs = parsedProjectSpecFile.projects;
+        // For each key in parsedProjectSpec (project) we load the details. 
+        Object.keys(projectSpecs).forEach((projectSpecName) => {
+            var projectSpec: TypeScriptProjectSpecification = projectSpecs[projectSpecName];
+            // Extend the default spec if any
+            projectSpec = extend(defaults, projectSpec);
+            // add to projects
+            var parsed = parseProject(projectSpecName, projectSpec);
+            projects.push(parsed);
+        });
+    }
 
     return {
         projectFileDirectory: path.dirname(projectFile) + path.sep,
@@ -115,3 +123,35 @@ export function getProjectsForFileSync(file: string): TypeScriptProjectFileDetai
 export function createRootProjectSync(pathOrSrcFile, spec?: TypeScriptProjectSpecification) {
     return;
 }
+
+/** Run with default if no val given or run with val */
+function runWithDefault<T>(run: (val: T) => any, val: T, def?: T) {
+    // no val
+    if (val == void 0) {
+        if (def != void 0) {
+            run(def);
+        }
+    }
+    else {
+        run(val);
+    }
+}
+
+/** from _.extend */
+function extend(obj, ...args: any[]) {
+    var source, prop, ret = {};
+    // Shallow copy obj 
+    for (var p in obj) {
+        ret[p] = obj[p];
+    }
+    // Shallow copy from other args
+    for (var i = 1, length = arguments.length; i < length; i++) {
+        source = arguments[i];
+        for (prop in source) {
+            if (source.hasOwnProperty(prop)) {
+                ret[prop] = source[prop];
+            }
+        }
+    }
+    return ret;
+};

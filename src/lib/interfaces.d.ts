@@ -1,6 +1,5 @@
 interface TypeScriptProjectSpecification {
     sources?: string[];         // An array of 'minimatch` patterns to specify source files  
-
     target?: string;            // 'es3'|'es5'
     module?: string;            // 'amd'|'commonjs'
 
@@ -18,6 +17,7 @@ interface TypeScriptProjectSpecification {
 
 // Main configuration
 interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecification {
+    defaults: TypeScriptProjectSpecification;
     projects?: {
         [projectName: string]: TypeScriptProjectSpecification;
     }
