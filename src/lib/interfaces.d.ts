@@ -16,8 +16,8 @@ interface TypeScriptProjectSpecification {
 }
 
 // Main configuration
-interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecification {
-    defaults: TypeScriptProjectSpecification;
+interface TypeScriptProjectsRootSpecification extends TypeScriptProjectSpecification {
+    defaults?: TypeScriptProjectSpecification;
     projects: {
         [projectName: string]: TypeScriptProjectSpecification;
     }

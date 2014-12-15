@@ -3,6 +3,6 @@
 declare module 'tsproj' {
     export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDetails;
     export function getProjectsForFileSync(file: string): TypeScriptProjectFileDetails;
-    export function createRootProjectSync(pathOrSrcFile: any, spec?: TypeScriptProjectSpecification): void;
+    export function createProjectsRootSync(pathOrSrcFile: string, projectName?: string, defaults?: TypeScriptProjectSpecification): void;
 }
 

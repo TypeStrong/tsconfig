@@ -194,3 +194,13 @@ describe(main.getProjectsForFileSync.name, function () {
         });
     });
 });
+var fs = require('fs');
+describe(main.createProjectsRootSync.name, function () {
+    it('should be able to create project if not there', function () {
+        main.createProjectsRootSync(pathToTestProjects + '/create/new/foo.ts');
+        fs.unlinkSync(pathToTestProjects + '/create/new/tsproj.yml');
+    });
+    it('should fail if existing project', function () {
+        chai.assert.throws(function () { return main.createProjectsRootSync(pathToTestProjects + '/create/existing/foo.ts'); }, 'Project file already exists');
+    });
+});

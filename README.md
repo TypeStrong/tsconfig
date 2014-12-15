@@ -26,21 +26,22 @@ interface TypeScriptProjectSpecification {
 }
 
 // Main configuration
-interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecification {
-    defaults: TypeScriptProjectSpecification;
+interface TypeScriptProjectsRootSpecification extends TypeScriptProjectSpecification {
+    defaults?: TypeScriptProjectSpecification;
     projects: {
         [projectName: string]: TypeScriptProjectSpecification;
     }
 }
 ```
 *Note:* all strings are case insensitive.<br>
-*Note:* `defaults` are not required and should not participate in compilation. If you don't have `projects` then your configuration is invalid.<br>
+*Note:* `defaults` are not required and should not participate in compilation.<br> 
+*Note:* If you don't have `projects` then your configuration is invalid.<br>
 *Note:* any `default` property can be overridden by individual projects.<br>
 
 Please see the valid projects folder : https://github.com/TypeStrong/tsproj/tree/master/testprojects/valid
 
 ## Public API
-See `index.ts`. API exists for querying the project file, querying the projects relevant for single TypeScript file and creating a new project file.
+See `tsproj.d.ts`. API exists for querying the projects file, querying the projects relevant for single TypeScript file and creating a new projects file.
 
 # Contributing
 Please open issues for discussion.

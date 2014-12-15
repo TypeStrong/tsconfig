@@ -36,7 +36,7 @@ export function getProjectsSync(pathOrSrcFile: string): TypeScriptProjectFileDet
     projectFile = path.normalize(projectFile);
 
     // We now have a valid projectFile. Parse it: 
-    var parsedProjectSpecFile: TypeScriptProjectRootSpecification = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
+    var parsedProjectSpecFile: TypeScriptProjectsRootSpecification = yaml.safeLoad(fs.readFileSync(projectFile, 'utf8'));
     if (typeof parsedProjectSpecFile == "string") throw new Error("Invalid YAML");
     if (parsedProjectSpecFile.projects == void 0) throw new Error("Project file must have a 'projects' section");
 
@@ -119,9 +119,35 @@ export function getProjectsForFileSync(file: string): TypeScriptProjectFileDetai
     };
 }
 
-/** Creates a project at the specified path (or source file location). Defaults are assumed unless overriden by the optional spec. */
-export function createRootProjectSync(pathOrSrcFile, spec?: TypeScriptProjectSpecification) {
-    return;
+/** Creates a project at the specified path (or by source file location). Defaults are assumed unless overriden by the optional spec. */
+export function createProjectsRootSync(pathOrSrcFile: string, projectName: string = 'main', defaults: TypeScriptProjectSpecification = {}) {
+    if (!fs.existsSync(pathOrSrcFile))
+        throw new Error('Project directory must exist');
+
+    // Get directory 
+    var dir = fs.lstatSync(pathOrSrcFile).isDirectory() ? pathOrSrcFile : path.dirname(pathOrSrcFile);
+    var projectFilePath = path.normalize(dir + '/' + projectFileName);
+
+    if (fs.existsSync(projectFilePath))
+        throw new Error('Project file already exists');
+
+    // Setup a main project
+    var mainProject: TypeScriptProjectSpecification = {
+    };
+    if (!defaults.sources) mainProject.sources = ['./**/*.ts'];
+
+    // Setup the root spec using defaults
+    var rawStructure: TypeScriptProjectsRootSpecification = {
+        defaults: defaults,
+        projects: {}
+    };
+
+    // add the main project
+    rawStructure.projects[projectName] = mainProject;
+
+    // Write it out
+    var encoded = yaml.safeDump(rawStructure);
+    fs.writeFileSync(projectFilePath, encoded);
 }
 
 /** Run with default if no val given or run with val */

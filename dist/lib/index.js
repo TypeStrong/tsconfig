@@ -83,10 +83,27 @@ function getProjectsForFileSync(file) {
     };
 }
 exports.getProjectsForFileSync = getProjectsForFileSync;
-function createRootProjectSync(pathOrSrcFile, spec) {
-    return;
+function createProjectsRootSync(pathOrSrcFile, projectName, defaults) {
+    if (projectName === void 0) { projectName = 'main'; }
+    if (defaults === void 0) { defaults = {}; }
+    if (!fs.existsSync(pathOrSrcFile))
+        throw new Error('Project directory must exist');
+    var dir = fs.lstatSync(pathOrSrcFile).isDirectory() ? pathOrSrcFile : path.dirname(pathOrSrcFile);
+    var projectFilePath = path.normalize(dir + '/' + projectFileName);
+    if (fs.existsSync(projectFilePath))
+        throw new Error('Project file already exists');
+    var mainProject = {};
+    if (!defaults.sources)
+        mainProject.sources = ['./**/*.ts'];
+    var rawStructure = {
+        defaults: defaults,
+        projects: {}
+    };
+    rawStructure.projects[projectName] = mainProject;
+    var encoded = yaml.safeDump(rawStructure);
+    fs.writeFileSync(projectFilePath, encoded);
 }
-exports.createRootProjectSync = createRootProjectSync;
+exports.createProjectsRootSync = createProjectsRootSync;
 function runWithDefault(run, val, def) {
     if (val == void 0) {
         if (def != void 0) {
