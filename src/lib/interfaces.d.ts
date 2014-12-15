@@ -25,12 +25,12 @@ interface TypeScriptProjectRootSpecification extends TypeScriptProjectSpecificat
 
 ///////// FOR USE WITH THE API /////////////
 
-interface TypeScriptProjectSpecificationAPI extends TypeScriptProjectSpecification {
+interface TypeScriptProjectSpecificationParsed extends TypeScriptProjectSpecification {
     name: string; // project name. `.root` if the anonymous root project
-    absoluteSources: string; // The expanded `sources` so you don't need to expand yourself
+    expandedSources: string[]; // The expanded `sources` so you don't need to expand yourself
 }
 
 interface TypeScriptProjectFileDetails {
     projectFilePath: string; // The path to the project file
-    projects: TypeScriptProjectSpecificationAPI[];
+    projects: TypeScriptProjectSpecificationParsed[];
 }

@@ -10,7 +10,36 @@ describe(main.getProjectsSync.name, function () {
             testPath: pathToTestProjects + '/dual/src/foo.ts',
             expected: {
                 projectFilePath: path.normalize(pathToTestProjects + '/dual/tsproj.yml'),
-                projects: []
+                projects: [
+                    {
+                        "name": "web",
+                        "declaration": false,
+                        "expandedSources": [
+                            "./src/foo.ts"
+                        ],
+                        "module": "amd",
+                        "noImplicitAny": false,
+                        "removeComments": true,
+                        "sources": [
+                            "./**/*.ts"
+                        ],
+                        "target": "es5"
+                    },
+                    {
+                        "name": "node",
+                        "declaration": false,
+                        "expandedSources": [
+                            "./src/foo.ts"
+                        ],
+                        "module": "commonjs",
+                        "noImplicitAny": false,
+                        "removeComments": true,
+                        "sources": [
+                            "./**/*.ts"
+                        ],
+                        "target": "es5"
+                    }
+                ]
             }
         }
     ];
@@ -30,7 +59,7 @@ describe(main.getProjectsSync.name, function () {
         }
     ];
 
-    it('Expected results should match', function () {
+    it.only('Expected results should match', function () {
         expectedProjectFileDetails.forEach(function (test) {
             chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
         });

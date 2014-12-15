@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/TypeStrong/tsproj",
   "dependencies": {
-    "js-yaml": "^3.2.3"
+    "js-yaml": "^3.2.3",
+    "glob-expand": "0.0.2"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

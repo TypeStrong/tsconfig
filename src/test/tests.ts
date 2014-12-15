@@ -1,4 +1,5 @@
 /// <reference path="../typings/vendor.d.ts"/>
+/// <reference path="../lib/interfaces.d.ts"/>
 
 import main = require('../lib/index');
 import chai = require('chai');
@@ -17,7 +18,36 @@ describe(main.getProjectsSync.name, () => {
                 testPath: pathToTestProjects + '/dual/src/foo.ts',
                 expected: {
                     projectFilePath: path.normalize(pathToTestProjects + '/dual/tsproj.yml'),
-                    projects: []
+                    projects: [
+                        {
+                            "name": "web",
+                            "declaration": false,
+                            "expandedSources": [
+                                "./src/foo.ts"
+                            ],
+                            "module": "amd",
+                            "noImplicitAny": false,
+                            "removeComments": true,
+                            "sources": [
+                                "./**/*.ts"
+                            ],
+                            "target": "es5",
+                        },
+                        {
+                            "name": "node",
+                            "declaration": false,
+                            "expandedSources": [
+                                "./src/foo.ts"
+                            ],
+                            "module": "commonjs",
+                            "noImplicitAny": false,
+                            "removeComments": true,
+                            "sources": [
+                                "./**/*.ts"
+                            ],
+                            "target": "es5"
+                        }
+                    ]
                 }
             }
         ];
@@ -33,16 +63,16 @@ describe(main.getProjectsSync.name, () => {
             {
                 testPath: pathToTestProjects + '/noproject/foo.ts',
                 expectedFailureMessage: 'No Project Found'
-        },
-        {
-            testPath: pathToTestProjects + '/invalidfile',
-            expectedFailureMessage: 'Invalid YAML'
-        },
-    ]
+            },
+            {
+                testPath: pathToTestProjects + '/invalidfile',
+                expectedFailureMessage: 'Invalid YAML'
+            },
+            // TODO: invalid YAML : TypeError
+        ];
 
-    // TODO: invalid yaml : YAMLException
 
-    it('Expected results should match', () => {
+    it.only('Expected results should match', () => {
         expectedProjectFileDetails.forEach((test) => {
             chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
         });
