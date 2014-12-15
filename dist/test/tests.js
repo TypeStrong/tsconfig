@@ -5,9 +5,9 @@ var pathToTestProjects = path.normalize(path.join(__dirname, '../../testprojects
 describe(main.getProjectsSync.name, function () {
     var expectedProjectFileDetails = [
         {
-            testPath: pathToTestProjects + '/dual/src/foo.ts',
+            testPath: pathToTestProjects + '/valid/dual/src/foo.ts',
             expected: {
-                projectFileDirectory: path.normalize(pathToTestProjects + '/dual/'),
+                projectFileDirectory: path.normalize(pathToTestProjects + '/valid/dual/'),
                 projects: [
                     {
                         "name": "web",
@@ -45,9 +45,9 @@ describe(main.getProjectsSync.name, function () {
             }
         },
         {
-            testPath: pathToTestProjects + '/defaults/src/foo.ts',
+            testPath: pathToTestProjects + '/valid/defaultsonly/src/foo.ts',
             expected: {
-                projectFileDirectory: path.normalize(pathToTestProjects + '/defaults/'),
+                projectFileDirectory: path.normalize(pathToTestProjects + '/valid/defaultsonly/'),
                 projects: [
                     {
                         "name": "web",
@@ -68,9 +68,9 @@ describe(main.getProjectsSync.name, function () {
             }
         },
         {
-            testPath: pathToTestProjects + '/rootdefaults/src/foo.ts',
+            testPath: pathToTestProjects + '/valid/defaultsextended/src/foo.ts',
             expected: {
-                projectFileDirectory: path.normalize(pathToTestProjects + '/rootdefaults/'),
+                projectFileDirectory: path.normalize(pathToTestProjects + '/valid/defaultsextended/'),
                 projects: [
                     {
                         "name": "web",
@@ -97,15 +97,15 @@ describe(main.getProjectsSync.name, function () {
             expectedFailureMessage: 'Invalid Path'
         },
         {
-            testPath: pathToTestProjects + '/noproject/foo.ts',
+            testPath: pathToTestProjects + '/errors/noprojectfile/foo.ts',
             expectedFailureMessage: 'No Project Found'
         },
         {
-            testPath: pathToTestProjects + '/invalidfile',
+            testPath: pathToTestProjects + '/errors/invalidfile',
             expectedFailureMessage: 'Invalid YAML'
         },
         {
-            testPath: pathToTestProjects + '/invalidfilenoprojects/src',
+            testPath: pathToTestProjects + '/errors/noprojects/src',
             expectedFailureMessage: "Project file must have a 'projects' section"
         },
     ];
@@ -123,9 +123,9 @@ describe(main.getProjectsSync.name, function () {
 describe(main.getProjectsForFileSync.name, function () {
     var expectedProjectFileDetails = [
         {
-            testPath: pathToTestProjects + '/dual/src/foo.ts',
+            testPath: pathToTestProjects + '/valid/dual/src/foo.ts',
             expected: {
-                projectFileDirectory: path.normalize(pathToTestProjects + '/dual/'),
+                projectFileDirectory: path.normalize(pathToTestProjects + '/valid/dual/'),
                 projects: [
                     {
                         "name": "web",
@@ -163,9 +163,9 @@ describe(main.getProjectsForFileSync.name, function () {
             }
         },
         {
-            testPath: pathToTestProjects + '/dual/webonly/bar.ts',
+            testPath: pathToTestProjects + '/valid/dual/webonly/bar.ts',
             expected: {
-                projectFileDirectory: path.normalize(pathToTestProjects + '/dual/'),
+                projectFileDirectory: path.normalize(pathToTestProjects + '/valid/dual/'),
                 projects: [
                     {
                         "name": "web",
