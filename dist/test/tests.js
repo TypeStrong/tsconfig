@@ -90,6 +90,30 @@ describe(main.getProjectsSync.name, function () {
                 ]
             }
         },
+        {
+            testPath: pathToTestProjects + '/valid/excludes/src/foo.ts',
+            expected: {
+                projectFileDirectory: path.normalize(pathToTestProjects + '/valid/excludes/'),
+                projects: [
+                    {
+                        "name": "main",
+                        "declaration": false,
+                        "expandedSources": [
+                            "./src/foo.ts",
+                        ],
+                        "module": "amd",
+                        "noImplicitAny": false,
+                        "removeComments": true,
+                        "sources": [
+                            "./src/**/*.ts",
+                            "!./src/**/*.spec.ts",
+                        ],
+                        sourceMap: false,
+                        "target": "es5",
+                    },
+                ]
+            }
+        },
     ];
     var failOnThese = [
         {

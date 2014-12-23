@@ -1,0 +1,6 @@
+projects:
+    main: 
+        module: amd
+        sources: 
+            - ./src/**/*.ts
+            - '!./src/**/*.spec.ts'
