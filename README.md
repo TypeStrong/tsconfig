@@ -9,7 +9,7 @@ Specify the project configuration in a `tsproj.yml` file in the root of your pro
 
 ```ts
 interface TypeScriptProjectSpecification {
-    sources?: string[];         // An array of 'minimatch` patterns to specify source files  
+    sources?: string[];         // An array of 'glob / minimatch / RegExp' patterns to specify source files  
     target?: string;            // 'es3'|'es5'
     module?: string;            // 'amd'|'commonjs'
 
@@ -37,6 +37,7 @@ interface TypeScriptProjectsRootSpecification extends TypeScriptProjectSpecifica
 *Note:* `defaults` are not required and should not participate in compilation.<br> 
 *Note:* If you don't have `projects` then your configuration is invalid.<br>
 *Note:* any `default` property can be overridden by individual projects.<br>
+*Note:* `sources` can be fairly dynamic. See [node-glob](https://github.com/isaacs/node-glob) and [minimatch](https://github.com/isaacs/minimatch) (similar to `grunt`) for all the configuration options
 
 Please see the valid projects folder : https://github.com/TypeStrong/tsproj/tree/master/testprojects/valid
 
