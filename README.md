@@ -41,7 +41,7 @@ interface TypeScriptProjectsRootSpecification extends TypeScriptProjectSpecifica
 Please see the valid projects folder : https://github.com/TypeStrong/tsproj/tree/master/testprojects/valid
 
 ## Public API
-See `tsproj.d.ts`. API exists for querying the projects file, querying the projects relevant for single TypeScript file and creating a new projects file.
+See [`tsproj.d.ts`](https://github.com/TypeStrong/tsproj/blob/master/dist/lib/tsproj.d.ts). API exists for querying the projects file, querying the projects relevant for single TypeScript file and creating a new projects file.
 
 # Contributing
 Please open issues for discussion.
