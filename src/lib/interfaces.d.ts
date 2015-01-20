@@ -1,7 +1,6 @@
-interface TypeScriptProjectSpecification {
-    sources?: string[];         // An array of 'glob / minimatch / RegExp' patterns to specify source files  
-    target?: string;            // 'es3'|'es5'
-    module?: string;            // 'amd'|'commonjs'
+interface CompilerOptions {
+    target?: string;            // 'es3'|'es5' (default) | 'es6'
+    module?: string;            // 'amd'|'commonjs' (default)
 
     declaration?: boolean;      // Generates corresponding `.d.ts` file
     out?: string;               // Concatenate and emit a single file
@@ -16,21 +15,15 @@ interface TypeScriptProjectSpecification {
 }
 
 // Main configuration
-interface TypeScriptProjectsRootSpecification extends TypeScriptProjectSpecification {
-    defaults?: TypeScriptProjectSpecification;
-    projects: {
-        [projectName: string]: TypeScriptProjectSpecification;
-    }
+interface TypeScriptProjectSpecification {
+    compilerOptions?: CompilerOptions;
+    files?: string[];            // optional: paths to files
+    filesGlob?: string[];        // optional: An array of 'glob / minimatch / RegExp' patterns to specify source files  
 }
 
 ///////// FOR USE WITH THE API /////////////
 
-interface TypeScriptProjectSpecificationParsed extends TypeScriptProjectSpecification {
-    name: string; // project name. `.root` if the anonymous root project
-    expandedSources: string[]; // The expanded `sources` so you don't need to expand yourself
-}
-
 interface TypeScriptProjectFileDetails {
     projectFileDirectory: string; // The path to the project file
-    projects: TypeScriptProjectSpecificationParsed[];
+    project: TypeScriptProjectSpecification;
 }

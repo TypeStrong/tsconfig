@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             build: {
 
                 options: {
-                    name: 'tsproj',
+                    name: 'tsconfig',
                     main: './dist/lib/index.d.ts'
                 }
             }

@@ -7,123 +7,33 @@ import path = require('path');
 
 var pathToTestProjects = path.normalize(path.join(__dirname, '../../testprojects/'));
 
-describe(main.getProjectsSync.name, () => {
-
+describe(main.getProjectsSync.name,() => {
 
     var expectedProjectFileDetails: {
         testPath: string;
         expected: TypeScriptProjectFileDetails;
     }[] = [
             {
-                testPath: pathToTestProjects + '/valid/dual/src/foo.ts',
+                testPath: pathToTestProjects + '/valid/simple/src/foo.ts',
                 expected: {
-                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/dual/'),
-                    projects: [
-                        {
-                            "name": "web",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts",
-                                "./webonly/bar.ts"
-                            ],
-                            "module": "amd",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                                "./webonly/**/*.ts"
-                            ],
-                            sourceMap: false,
-                            "target": "es5",
-                        },
-                        {
-                            "name": "node",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts"
-                            ],
+                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/simple/'),
+                    project: {
+                        "compilerOptions": {
+                            declaration: false,
                             "module": "commonjs",
-                            "noImplicitAny": false,
+                            "noImplicitAny": true,
                             "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                            ],
-                            sourceMap: false,
-                            "target": "es5"
-                        }
-                    ]
-                }
-            },
-            {
-                testPath: pathToTestProjects + '/valid/defaultsonly/src/foo.ts',
-                expected: {
-                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/defaultsonly/'),
-                    projects: [
-                        {
-                            "name": "web",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts",
-                            ],
-                            "module": "amd",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                            ],
-                            sourceMap: false,
-                            "target": "es5",
+                            "preserveConstEnums": true,
+                            "out": "../../built/local/tsc.js",
+                            "sourceMap": true,
+                            target:'es5'
                         },
-                    ]
+                        "files": [
+                            "./src/foo.ts"
+                        ]
+                    }
                 }
-            },
-            {
-                testPath: pathToTestProjects + '/valid/defaultsextended/src/foo.ts',
-                expected: {
-                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/defaultsextended/'),
-                    projects: [
-                        {
-                            "name": "web",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts",
-                            ],
-                            "module": "amd",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                            ],
-                            sourceMap: false,
-                            "target": "es5",
-                        },
-                    ]
-                }
-            },
-            {
-                testPath: pathToTestProjects + '/valid/excludes/src/foo.ts',
-                expected: {
-                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/excludes/'),
-                    projects: [
-                        {
-                            "name": "main",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts",
-                            ],
-                            "module": "amd",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                                "!./src/**/*.spec.ts",
-                            ],
-                            sourceMap: false,
-                            "target": "es5",
-                        },
-                    ]
-                }
-            },
+            }
         ];
 
     var failOnThese: {
@@ -140,118 +50,34 @@ describe(main.getProjectsSync.name, () => {
             },
             {
                 testPath: pathToTestProjects + '/errors/invalidfile',
-                expectedFailureMessage: 'Invalid YAML'
-            },
-            {
-                testPath: pathToTestProjects + '/errors/noprojects/src',
-                expectedFailureMessage: "Project file must have a 'projects' section"
+                expectedFailureMessage: 'Invalid JSON'
             },
         ];
 
 
-    it('Expected results should match', () => {
+    it('Expected results should match',() => {
         expectedProjectFileDetails.forEach((test) => {
-            chai.assert.deepEqual(main.getProjectsSync(test.testPath), test.expected);
+            var result = main.getProjectsSync(test.testPath);
+            chai.assert.deepEqual(result, test.expected);
         });
     });
 
-    it('Fail gracefully', () => {
+    it('Fail gracefully',() => {
         failOnThese.forEach((test) => {
             chai.assert.throws(() => main.getProjectsSync(test.testPath), test.expectedFailureMessage);
         });
     });
 });
 
-
-describe(main.getProjectsForFileSync.name, () => {
-    var expectedProjectFileDetails: {
-        testPath: string;
-        expected: TypeScriptProjectFileDetails;
-    }[] = [
-            {
-                testPath: pathToTestProjects + '/valid/dual/src/foo.ts',
-                expected: {
-                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/dual/'),
-                    projects: [
-                        {
-                            "name": "web",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts",
-                                "./webonly/bar.ts"
-                            ],
-                            "module": "amd",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                                "./webonly/**/*.ts"
-                            ],
-                            sourceMap: false,
-                            "target": "es5",
-                        },
-                        {
-                            "name": "node",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts"
-                            ],
-                            "module": "commonjs",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                            ],
-                            sourceMap: false,
-                            "target": "es5"
-                        }
-                    ]
-                }
-            },
-            {
-                testPath: pathToTestProjects + '/valid/dual/webonly/bar.ts',
-                expected: {
-                    projectFileDirectory: path.normalize(pathToTestProjects + '/valid/dual/'),
-                    projects: [
-                        {
-                            "name": "web",
-                            "declaration": false,
-                            "expandedSources": [
-                                "./src/foo.ts",
-                                "./webonly/bar.ts"
-                            ],
-                            "module": "amd",
-                            "noImplicitAny": false,
-                            "removeComments": true,
-                            "sources": [
-                                "./src/**/*.ts",
-                                "./webonly/**/*.ts"
-                            ],
-                            sourceMap: false,
-                            "target": "es5",
-                        }
-                    ]
-                }
-            }
-        ];
-
-    it('Expected results should match', () => {
-        expectedProjectFileDetails.forEach((test) => {
-            chai.assert.deepEqual(main.getProjectsForFileSync(test.testPath), test.expected);
-        });
-    });
-
-});
-
 import fs = require('fs');
-describe(main.createProjectsRootSync.name, () => {
-    
-    it('should be able to create project if not there', () => {
+describe(main.createProjectsRootSync.name,() => {
+
+    it('should be able to create project if not there',() => {
         main.createProjectsRootSync(pathToTestProjects + '/create/new/foo.ts')
-        fs.unlinkSync(pathToTestProjects + '/create/new/tsproj.yml')
+        fs.unlinkSync(pathToTestProjects + '/create/new/tsconfig.json')
     });
 
-    it('should fail if existing project', () => {
+    it('should fail if existing project',() => {
         chai.assert.throws(() => main.createProjectsRootSync(pathToTestProjects + '/create/existing/foo.ts'), 'Project file already exists');
     });
 });
