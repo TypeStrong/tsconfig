@@ -5,6 +5,7 @@ interface CompilerOptions {
     declaration?: boolean;      // Generates corresponding `.d.ts` file
     out?: string;               // Concatenate and emit a single file
     outDir?: string;            // Redirect output structure to this directory
+    rootDir?: string;           // Customizes the commonSourceRoot instead of automatically calculating it
 
     noImplicitAny?: boolean;    // Error on inferred `any` type
     removeComments?: boolean;   // Do not emit comments in output
