@@ -1,45 +1,42 @@
-# tsconfig
-[![Build Status](https://secure.travis-ci.org/TypeStrong/tsconfig.svg?branch=master)](http://travis-ci.org/TypeStrong/tsconfig)
+# TSConfig
 
-Based on [this spec](https://github.com/Microsoft/TypeScript/issues/1667) and [this implementation](https://github.com/Microsoft/TypeScript/pull/1692)
+[![NPM version][npm-image]][npm-url]
+[![NPM downloads][downloads-image]][downloads-url]
+[![Build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
 
-A specification for a file format + parser Implementation for specifying TypeScript projects
+Resolve and parse [`tsconfig.json`](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json), with support for `filesGlob` (array of glob strings).
 
-# Specification
-## Configuration file format
-Specify the project configuration in a `tsconfig.json` file in the root of your project. The structure will be specified using the interface `TypeScriptProjectSpecification`: 
+## Usage
 
-```ts
-interface CompilerOptions {
-    target?: string;            // 'es3'|'es5' (default) | 'es6'
-    module?: string;            // 'amd'|'commonjs' (default)
+See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json) for information on setting up `tsconfig.json`. Additionally, this module will parse the `filesGlob` option, if it exists.
 
-    declaration?: boolean;      // Generates corresponding `.d.ts` file
-    out?: string;               // Concatenate and emit a single file
-    outDir?: string;            // Redirect output structure to this directory
+### API
 
-    noImplicitAny?: boolean;    // Error on inferred `any` type
-    removeComments?: boolean;   // Do not emit comments in output
+* `resolve(dir: string, cb: (err: Error, filename?: string) => any)` Aschronously resolve the location of `tsconfig.json`
+* `resolveSync(dir: string): string` Synchronous version of `resolve`
+* `load(dir: string, cb: (err: Error, config?: TSConfig) => any)` Resolve, load and parse `tsconfig.json` from a directory
+* `loadSync(dir: string): TSConfig` Synchronous version of `load`
+* `readFile(filename: string, cb: (err: Error, config?: TSConfig) => any)` Read any file as `tsconfig.json`
+* `readFileSync(filename: string): TSConfig` Synchronous version of `readFile`
+* `parseFile(contents: string, filename: string, cb: (err: Error, config?: TSConfig) => any)` Parse any string using TSConfig
+* `parseFileSync(contents: string, filename: string): TSConfig` Synchronous version of `parseFile`
+* `resolveConfig(data: TSConfig, filename: string, cb: (err: Error, config?: TSConfig) => any)` Resolve a `tsconfig.json` object against a filename (E.g. `filesGlob`)
+* `resolveConfigSync(data: TSConfig, filename: string): TSConfig` Synchronous version of `resolveConfig`
 
-    sourceMap?: boolean;        // Generates SourceMaps (.map files)
-    sourceRoot?: string;        // Optionally specifies the location where debugger should locate TypeScript source files after deployment
-    mapRoot?: string;           // Optionally Specifies the location where debugger should locate map files after deployment
-}
+## Contributing
 
-
-// Main configuration
-interface TypeScriptProjectSpecification {    
-    compilerOptions: CompilerOptions;
-    files?: string[];            // optional: paths to files
-    filesGlob?: string[];       // optional: An array of 'glob / minimatch / RegExp' patterns to specify source files  
-}
-```
-*Note:* `filesGlob` can be fairly dynamic. See [node-glob](https://github.com/isaacs/node-glob) and [minimatch](https://github.com/isaacs/minimatch) (similar to `grunt`) for all the configuration options. If you call any of the API in this project that reads a `tsconfig.json` file, the `files-glob` is auto expanded (on disk) into `files` before returning.  
-
-Please see the valid projects folder : https://github.com/TypeStrong/tsconfig/tree/master/testprojects/valid
-
-## Public API
-See [`tsconfig.d.ts`](https://github.com/TypeStrong/tsconfig/blob/master/dist/lib/tsconfig.d.ts). API exists for querying the projects file, querying the projects relevant for single TypeScript file and creating a new projects file.
-
-# Contributing
 Please open issues for discussion.
+
+## License
+
+MIT License
+
+[npm-image]: https://img.shields.io/npm/v/tsconfig.svg?style=flat
+[npm-url]: https://npmjs.org/package/tsconfig
+[downloads-image]: https://img.shields.io/npm/dm/tsconfig.svg?style=flat
+[downloads-url]: https://npmjs.org/package/tsconfig
+[travis-image]: https://img.shields.io/travis/TypeStrong/tsconfig.svg?style=flat
+[travis-url]: https://travis-ci.org/TypeStrong/tsconfig
+[coveralls-image]: https://img.shields.io/coveralls/TypeStrong/tsconfig.svg?style=flat
+[coveralls-url]: https://coveralls.io/r/TypeStrong/tsconfig?branch=master

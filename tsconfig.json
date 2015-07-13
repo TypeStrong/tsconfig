@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "outDir": "dist",
+    "module": "commonjs",
+    "declaration": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "sourceMap": true
+  },
+  "files": [
+    "src/tsconfig.ts",
+    "src/tsconfig.spec.ts",
+    "typings/tsd.d.ts",
+    "src/typings/xtend.d.ts",
+    "src/typings/globby.d.ts"
+  ]
+}
