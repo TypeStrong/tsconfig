@@ -6,6 +6,11 @@
   "typescript": {
     "definition": "tsconfig.d.ts"
   },
+  "files": [
+    "dist/",
+    "LICENSE",
+    "tsconfig.d.ts"
+  ],
   "scripts": {
     "lint": "# TODO",
     "build": "npm run build-ts",
