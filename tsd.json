@@ -13,9 +13,6 @@
     },
     "chai/chai.d.ts": {
       "commit": "5898d809e04403dfe5c62c0ec1713d10c54126f7"
-    },
-    "js-yaml/js-yaml.d.ts": {
-      "commit": "5898d809e04403dfe5c62c0ec1713d10c54126f7"
     }
   }
 }
