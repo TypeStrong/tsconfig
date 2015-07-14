@@ -33,7 +33,7 @@ export function resolve (dir: string, cb: (err: Error, filename?: string) => any
     const parentDir = path.dirname(dir)
 
     if (dir === parentDir) {
-      return cb(new Error('No config file found'))
+      return cb(null, undefined)
     }
 
     return resolve(parentDir, cb)
@@ -53,7 +53,7 @@ export function resolveSync (dir: string): string {
   const parentDir = path.dirname(dir)
 
   if (dir === parentDir) {
-    throw new Error('No config file found')
+    return
   }
 
   return resolveSync(parentDir)
@@ -68,6 +68,10 @@ export function load (dir: string, cb: (err: Error, config?: TSConfig) => any) {
       return cb(err)
     }
 
+    if (!filename) {
+      return cb(new Error('No config file found'))
+    }
+
     return readFile(filename, cb)
   })
 }
@@ -77,6 +81,10 @@ export function load (dir: string, cb: (err: Error, config?: TSConfig) => any) {
  */
 export function loadSync (dir: string): TSConfig {
   const filename = resolveSync(dir)
+
+  if (!filename) {
+    throw new Error('No config file found')
+  }
 
   return readFileSync(filename)
 }
@@ -166,8 +174,11 @@ export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
  * Get a glob from tsconfig.
  */
 function getGlob (data: TSConfig): string[] {
-  return Array.isArray(data.filesGlob) ?
-    data.filesGlob : (Array.isArray(data.files) ? null : ['./**/*.ts'])
+  if (Array.isArray(data.filesGlob)) {
+    return data.filesGlob
+  }
+
+  return Array.isArray(data.files) ? null : ['./**/*.ts']
 }
 
 /**
