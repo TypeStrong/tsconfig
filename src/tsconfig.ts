@@ -209,7 +209,9 @@ function parseContents (contents: string): TSConfig {
   try {
     return JSON.parse(stripBom(contents))
   } catch (err) {
-    throw new Error('Unable to parse configuration file: ' + err.message)
+    err.message = 'Unable to parse configuration file: ' + err.message
+
+    throw err
   }
 }
 
