@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import glob = require('globby')
 import extend = require('xtend')
+import stripBom = require('strip-bom')
 
 export type TSConfig = any
 
@@ -206,7 +207,7 @@ function sanitizeConfig (data: TSConfig, files: string[], filename: string): TSC
  */
 function parseContents (contents: string): TSConfig {
   try {
-    return JSON.parse(contents)
+    return JSON.parse(stripBom(contents))
   } catch (err) {
     throw new Error('Unable to parse configuration file: ' + err.message)
   }

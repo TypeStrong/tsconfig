@@ -37,6 +37,25 @@ describe('tsconfig', function () {
         ]
       },
       filename: join(__dirname, '../tests/valid/tsconfig.json')
+    },
+    {
+      path: join(__dirname, '../tests/bom'),
+      result: {
+        compilerOptions: {
+          target: 'es5',
+          module: 'commonjs',
+          declaration: false,
+          noImplicitAny: true,
+          outDir: 'dist',
+          removeComments: true,
+          sourceMap: true,
+          preserveConstEnums: true
+        },
+        files: [
+          join(__dirname, '../tests/bom/src/bom.ts')
+        ]
+      },
+      filename: join(__dirname, '../tests/bom/tsconfig.json')
     }
   ]
 

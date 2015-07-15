@@ -13,6 +13,7 @@
     "src/tsconfig.spec.ts",
     "typings/tsd.d.ts",
     "src/typings/xtend.d.ts",
-    "src/typings/globby.d.ts"
+    "src/typings/globby.d.ts",
+    "src/typings/strip-bom.d.ts"
   ]
 }
