@@ -17,7 +17,7 @@ describe('tsconfig', function () {
     },
     {
       path: join(__dirname, '../tests/invalidfile'),
-      error: 'Unable to parse configuration file: Unexpected token s'
+      error: `Unexpected token 's' at 1:1 in ${join(__dirname, '../tests/invalidfile/tsconfig.json')}\nsome random string\n^`
     },
     {
       path: join(__dirname, '../tests/valid'),

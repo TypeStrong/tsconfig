@@ -3,6 +3,7 @@ import * as path from 'path'
 import glob = require('globby')
 import extend = require('xtend')
 import stripBom = require('strip-bom')
+import parseJson = require('parse-json')
 
 export type TSConfig = any
 
@@ -99,7 +100,7 @@ export function readFile (filename: string, cb: (err: Error, config?: TSConfig) 
       return cb(err)
     }
 
-    return parseFile(contents, filename, cb)
+    return parseFile(stripBom(contents), filename, cb)
   })
 }
 
@@ -109,7 +110,7 @@ export function readFile (filename: string, cb: (err: Error, config?: TSConfig) 
 export function readFileSync (filename: string): TSConfig {
   const contents = fs.readFileSync(filename, 'utf8')
 
-  return parseFileSync(contents, filename)
+  return parseFileSync(stripBom(contents), filename)
 }
 
 /**
@@ -119,7 +120,7 @@ export function parseFile (contents: string, filename: string, cb: (err: Error, 
   let data: TSConfig
 
   try {
-    data = parseContents(contents)
+    data = parseJson(contents, null, filename)
   } catch (err) {
     cb(err)
     return
@@ -132,7 +133,7 @@ export function parseFile (contents: string, filename: string, cb: (err: Error, 
  * Synchronous version of `parseFile`.
  */
 export function parseFileSync (contents: string, filename: string): TSConfig {
-  const data = parseContents(contents)
+  const data = parseJson(contents, null, filename)
 
   return resolveConfigSync(data, filename)
 }
@@ -200,19 +201,6 @@ function sanitizeConfig (data: TSConfig, files: string[], filename: string): TSC
     .filter((filename: string, index: number, arr: string[]) => arr.indexOf(filename) === index)
 
   return config
-}
-
-/**
- * JSON parse file contents.
- */
-function parseContents (contents: string): TSConfig {
-  try {
-    return JSON.parse(stripBom(contents))
-  } catch (err) {
-    err.message = 'Unable to parse configuration file: ' + err.message
-
-    throw err
-  }
 }
 
 /**
