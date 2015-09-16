@@ -3,9 +3,6 @@
   "version": "1.0.2",
   "description": "TypeScript project file specification + implementation",
   "main": "dist/tsconfig.js",
-  "typescript": {
-    "definition": "tsconfig.d.ts"
-  },
   "files": [
     "dist/",
     "LICENSE",
