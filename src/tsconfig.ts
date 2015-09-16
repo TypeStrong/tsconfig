@@ -5,7 +5,12 @@ import extend = require('xtend')
 import stripBom = require('strip-bom')
 import parseJson = require('parse-json')
 
-export type TSConfig = any
+export type TSConfig = {
+  compilerOptions?: any
+  files?: string[]
+  exclude?: string[]
+  filesGlob?: string[]
+}
 
 export const DEFAULTS = {
   target: 'es5',
@@ -142,11 +147,12 @@ export function parseFileSync (contents: string, filename: string): TSConfig {
  * Sanitize a configuration object.
  */
 export function resolveConfig (data: TSConfig, filename: string, cb: (err: Error, config?: TSConfig) => any) {
-  let filesGlob = getGlob(data)
+  const filesGlob = getGlob(data)
 
   if (filesGlob) {
     return glob(filesGlob, {
-      cwd: path.dirname(filename)
+      cwd: path.dirname(filename),
+      nodir: true
     }, function (err, files) {
       if (err) {
         return cb(err)
@@ -163,10 +169,13 @@ export function resolveConfig (data: TSConfig, filename: string, cb: (err: Error
  * Synchronous version of `resolveConfig`.
  */
 export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
-  let filesGlob = getGlob(data)
+  const filesGlob = getGlob(data)
 
   if (filesGlob) {
-    return sanitizeConfig(data, glob.sync(filesGlob, { cwd: path.dirname(filename) }), filename)
+    return sanitizeConfig(data, glob.sync(filesGlob, {
+      cwd: path.dirname(filename),
+      nodir: true
+    }), filename)
   }
 
   return sanitizeConfig(data, null, filename)
@@ -176,31 +185,30 @@ export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
  * Get a glob from tsconfig.
  */
 function getGlob (data: TSConfig): string[] {
-  if (Array.isArray(data.filesGlob)) {
-    return data.filesGlob
+  if (Array.isArray(data.files)) {
+    return
   }
 
-  return Array.isArray(data.files) ? null : ['./**/*.ts']
+  const glob = data.filesGlob || ['**/*.ts', '**/*.tsx']
+
+  if (Array.isArray(data.exclude)) {
+    return glob.concat(data.exclude.map(x => `!${x}{,/**/*}`))
+  }
+
+  return glob
 }
 
 /**
  * Sanitize tsconfig options.
  */
 function sanitizeConfig (data: TSConfig, files: string[], filename: string): TSConfig {
-  const config = {
+  const dirname = path.dirname(filename)
+
+  return extend(data, {
     compilerOptions: extend(DEFAULTS, data.compilerOptions),
-    files: Array.isArray(data.files) ? data.files.slice() : []
-  }
-
-  const dir = path.dirname(filename)
-
-  // Sanitize files path relative to `tsconfig.json` and filter for duplicates.
-  config.files = config.files
-    .concat(files || [])
-    .map((filename: string) => path.resolve(dir, filename))
-    .filter((filename: string, index: number, arr: string[]) => arr.indexOf(filename) === index)
-
-  return config
+    files: sanitizeFilenames(files || data.files, dirname),
+    exclude: sanitizeFilenames(data.exclude, dirname)
+  })
 }
 
 /**
@@ -227,4 +235,17 @@ function fileExistsSync (filename: string): boolean {
   } catch (e) {
     return false
   }
+}
+
+/**
+ * Sanitize an array of file names to absolute paths.
+ */
+function sanitizeFilenames (filenames: string[], dirname: string) {
+  if (!filenames) {
+    return []
+  }
+
+  return filenames
+    .map(filename => path.resolve(dirname, filename))
+    .filter((filename, index, arr) => arr.indexOf(filename) === index)
 }
