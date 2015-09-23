@@ -3,7 +3,7 @@
   "version": "1.0.4",
   "description": "TypeScript project file specification + implementation",
   "main": "dist/tsconfig.js",
-  "typings": "tsconfig.d.ts",
+  "typings": "dist/tsconfig.d.ts",
   "files": [
     "dist/",
     "LICENSE",
