@@ -10,7 +10,7 @@
     "tsconfig.d.ts"
   ],
   "scripts": {
-    "lint": "# TODO",
+    "lint": "echo TODO",
     "build": "npm run build-ts",
     "build-ts": "rm -rf dist && tsc",
     "test-spec": "mocha dist/**/*.spec.js -R spec --bail",
