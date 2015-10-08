@@ -192,7 +192,7 @@ function getGlob (data: TSConfig): string[] {
   const glob = data.filesGlob || ['**/*.ts', '**/*.tsx']
 
   if (Array.isArray(data.exclude)) {
-    return glob.concat(data.exclude.map(x => `!${x}{,/**/*}`))
+    return glob.concat(data.exclude.map(x => `!${x}/**`))
   }
 
   return glob

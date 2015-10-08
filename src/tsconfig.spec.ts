@@ -76,7 +76,8 @@ describe('tsconfig', function () {
           join(__dirname, '../tests/exclude/included/foo.ts')
         ],
         exclude: [
-          join(__dirname, '../tests/exclude/excluded')
+          join(__dirname, '../tests/exclude/excluded'),
+          join(__dirname, '../tests/exclude/cwd.ts')
         ]
       },
       filename: join(__dirname, '../tests/exclude/tsconfig.json')
