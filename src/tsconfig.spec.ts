@@ -139,6 +139,25 @@ describe('tsconfig', function () {
         filesGlob: ['!test/**/*']
       },
       filename: join(__dirname, '../tests/glob-negation/tsconfig.json')
+    },
+    {
+      path: join(__dirname, '../tests/glob-multi'),
+      result: {
+        compilerOptions: {
+          declaration: false,
+          module: 'commonjs',
+          noImplicitAny: false,
+          removeComments: true,
+          target: 'es5'
+        },
+        exclude: [],
+        files: [
+          join(__dirname, '../tests/glob-multi/a/foo.ts'),
+          join(__dirname, '../tests/glob-multi/b/foo.ts')
+        ],
+        filesGlob: ['a/**/*.ts', 'b/**/*.ts']
+      },
+      filename: join(__dirname, '../tests/glob-multi/tsconfig.json')
     }
   ]
 
