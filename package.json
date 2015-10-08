@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/TypeStrong/tsconfig",
   "dependencies": {
-    "globby": "^2.1.0",
+    "glob": "^5.0.15",
     "parse-json": "^2.2.0",
     "strip-bom": "^2.0.0",
     "xtend": "^4.0.0"

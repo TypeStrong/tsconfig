@@ -1,0 +1,4 @@
+{
+  "filesGlob": ["src/**/*.ts"],
+  "files": []
+}
