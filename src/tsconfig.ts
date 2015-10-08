@@ -147,13 +147,14 @@ export function parseFileSync (contents: string, filename: string): TSConfig {
  * Sanitize a configuration object.
  */
 export function resolveConfig (data: TSConfig, filename: string, cb: (err: Error, config?: TSConfig) => any) {
-  const [filesGlob, opts] = getGlob(data)
+  const [filesGlob, ignore] = getGlob(data)
 
   if (filesGlob) {
-    return glob(filesGlob, extend(opts, {
+    return glob(filesGlob, {
       cwd: path.dirname(filename),
-      nodir: true
-    }), function (err, files) {
+      nodir: true,
+      ignore
+    }, function (err, files) {
       if (err) {
         return cb(err)
       }
@@ -169,13 +170,14 @@ export function resolveConfig (data: TSConfig, filename: string, cb: (err: Error
  * Synchronous version of `resolveConfig`.
  */
 export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
-  const [filesGlob, opts] = getGlob(data)
+  const [filesGlob, ignore] = getGlob(data)
 
   if (filesGlob) {
-    return sanitizeConfig(data, glob.sync(filesGlob, extend(opts, {
+    return sanitizeConfig(data, glob.sync(filesGlob, {
       cwd: path.dirname(filename),
-      nodir: true
-    })), filename)
+      nodir: true,
+      ignore
+    }), filename)
   }
 
   return sanitizeConfig(data, null, filename)
@@ -184,19 +186,46 @@ export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
 /**
  * Get a glob from tsconfig.
  */
-function getGlob (data: TSConfig): [string, any] {
-  if (Array.isArray(data.files)) {
-    return [null, null]
+function getGlob (data: TSConfig): [string, string[]] {
+  // Ensure the `filesGlob` does not exist before using `files`.
+  if (!Array.isArray(data.filesGlob) && Array.isArray(data.files)) {
+    return [null, []]
   }
 
-  const arr = data.filesGlob || ['**/*.ts', '**/*.tsx']
-  const glob = arr.length === 1 ? arr[0] : `{${arr.join(',')}}`
+  const [glob, ignore] = parseGlob(data.filesGlob)
 
   if (Array.isArray(data.exclude)) {
-    return [glob, { ignore: data.exclude.map(x => `${x}/**`) }]
+    data.exclude.forEach(x => ignore.push(`${x}/**`))
   }
 
-  return [glob, null]
+  return [glob, ignore]
+}
+
+/**
+ * Parse the files glob into the glob string and negations.
+ */
+function parseGlob (filesGlob: string[] = []): [string, string[]] {
+  let pattern = '{**/*.ts,**/*.tsx}'
+  const positives: string[] = []
+  const negatives: string[] = []
+
+  for (const glob of filesGlob) {
+    if (typeof glob === 'string') {
+      if (glob.charAt(0) === '!') {
+        negatives.push(glob.substr(1))
+      } else {
+        positives.push(glob)
+      }
+    }
+  }
+
+  if (positives.length === 1) {
+    pattern = positives[0]
+  } else if (positives.length > 1) {
+    pattern = `{${positives.join(',')}}`
+  }
+
+  return [pattern, negatives]
 }
 
 /**
