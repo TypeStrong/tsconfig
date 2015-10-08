@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import glob = require('globby')
+import glob = require('glob')
 import extend = require('xtend')
 import stripBom = require('strip-bom')
 import parseJson = require('parse-json')
@@ -147,13 +147,13 @@ export function parseFileSync (contents: string, filename: string): TSConfig {
  * Sanitize a configuration object.
  */
 export function resolveConfig (data: TSConfig, filename: string, cb: (err: Error, config?: TSConfig) => any) {
-  const filesGlob = getGlob(data)
+  const [filesGlob, opts] = getGlob(data)
 
   if (filesGlob) {
-    return glob(filesGlob, {
+    return glob(filesGlob, extend(opts, {
       cwd: path.dirname(filename),
       nodir: true
-    }, function (err, files) {
+    }), function (err, files) {
       if (err) {
         return cb(err)
       }
@@ -169,13 +169,13 @@ export function resolveConfig (data: TSConfig, filename: string, cb: (err: Error
  * Synchronous version of `resolveConfig`.
  */
 export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
-  const filesGlob = getGlob(data)
+  const [filesGlob, opts] = getGlob(data)
 
   if (filesGlob) {
-    return sanitizeConfig(data, glob.sync(filesGlob, {
+    return sanitizeConfig(data, glob.sync(filesGlob, extend(opts, {
       cwd: path.dirname(filename),
       nodir: true
-    }), filename)
+    })), filename)
   }
 
   return sanitizeConfig(data, null, filename)
@@ -184,18 +184,19 @@ export function resolveConfigSync (data: TSConfig, filename: string): TSConfig {
 /**
  * Get a glob from tsconfig.
  */
-function getGlob (data: TSConfig): string[] {
+function getGlob (data: TSConfig): [string, any] {
   if (Array.isArray(data.files)) {
-    return
+    return [null, null]
   }
 
-  const glob = data.filesGlob || ['**/*.ts', '**/*.tsx']
+  const arr = data.filesGlob || ['**/*.ts', '**/*.tsx']
+  const glob = arr.length === 1 ? arr[0] : `{${arr.join(',')}}`
 
   if (Array.isArray(data.exclude)) {
-    return glob.concat(data.exclude.map(x => `!${x}/**`))
+    return [glob, { ignore: data.exclude.map(x => `${x}/**`) }]
   }
 
-  return glob
+  return [glob, null]
 }
 
 /**

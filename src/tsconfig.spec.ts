@@ -103,6 +103,24 @@ describe('tsconfig', function () {
         exclude: []
       },
       filename: join(__dirname, '../tests/cwd/tsconfig.json')
+    },
+    {
+      path: join(__dirname, '../tests/glob'),
+      result: {
+        compilerOptions: {
+          declaration: false,
+          module: 'commonjs',
+          noImplicitAny: false,
+          removeComments: true,
+          target: 'es5'
+        },
+        exclude: [],
+        files: [
+          join(__dirname, '../tests/glob/src/foo.ts')
+        ],
+        filesGlob: ['src/**/*.ts']
+      },
+      filename: join(__dirname, '../tests/glob/tsconfig.json')
     }
   ]
 
