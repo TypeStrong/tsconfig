@@ -12,13 +12,19 @@ export type TSConfig = {
   filesGlob?: string[]
 }
 
-export const DEFAULTS = {
-  target: 'es5',
-  module: 'commonjs',
+const ES6 = 'es6';
+
+export const DEFAULTS_ES6 = {
+  target: 'es6',
   declaration: false,
   noImplicitAny: false,
   removeComments: true
 }
+
+export const DEFAULTS = extend({}, DEFAULTS_ES6, {
+  target: 'es5',
+  module: 'commonjs'
+});
 
 const CONFIG_FILENAME = 'tsconfig.json'
 
@@ -234,8 +240,16 @@ function parseGlob (filesGlob: string[] = []): [string, string[]] {
 function sanitizeConfig (data: TSConfig, files: string[], filename: string): TSConfig {
   const dirname = path.dirname(filename)
 
+  let defaults: any;
+  if (data.compilerOptions && data.compilerOptions.target === ES6) {
+    defaults = DEFAULTS_ES6;
+    delete data.compilerOptions.module;
+  } else {
+    defaults = DEFAULTS;
+  }
+
   return extend(data, {
-    compilerOptions: extend(DEFAULTS, data.compilerOptions),
+    compilerOptions: extend(defaults, data.compilerOptions),
     files: sanitizeFilenames(files || data.files, dirname),
     exclude: sanitizeFilenames(data.exclude, dirname)
   })
