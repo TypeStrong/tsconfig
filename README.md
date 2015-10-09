@@ -13,16 +13,22 @@ See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.
 
 ### API
 
-* `resolve(dir: string, cb: (err: Error, filename?: string) => any)` Aschronously resolve the location of `tsconfig.json`
-* `resolveSync(dir: string): string` Synchronous version of `resolve`
-* `load(dir: string, cb: (err: Error, config?: TSConfig) => any)` Resolve, load and parse `tsconfig.json` from a directory
-* `loadSync(dir: string): TSConfig` Synchronous version of `load`
-* `readFile(filename: string, cb: (err: Error, config?: TSConfig) => any)` Read any file as `tsconfig.json`
-* `readFileSync(filename: string): TSConfig` Synchronous version of `readFile`
-* `parseFile(contents: string, filename: string, cb: (err: Error, config?: TSConfig) => any)` Parse any string using TSConfig
-* `parseFileSync(contents: string, filename: string): TSConfig` Synchronous version of `parseFile`
-* `resolveConfig(data: TSConfig, filename: string, cb: (err: Error, config?: TSConfig) => any)` Resolve a `tsconfig.json` object against a filename (E.g. `filesGlob`)
-* `resolveConfigSync(data: TSConfig, filename: string): TSConfig` Synchronous version of `resolveConfig`
+* **resolve(dir: string): Promise<string>** Find up the location of `tsconfig.json`.
+* **resolveSync(dir: string): string** Synchronous `resolve`.
+* **load(dir: string, options?: Options): Promise<TSConfig>** Resolve, load and parse `tsconfig.json`.
+* **loadSync(dir: string): TSConfig** Synchronous `load`.
+* **readFile(filename: string, options?: Options): Promise<TSConfig>** Read a file as `tsconfig.json` (BOM, JSON parse, empty file and `files` expansion).
+* **readFileSync(filename: string, options?: Options): TSConfig** Synchronous `readFile`.
+* **parseFile(contents: string, filename: string, options?: Options): Promise<TSConfig>** Parse a string as `tsconfig.json` (BOM, JSON parse, empty contents and expansion).
+* **parseFileSync(contents: string, filename: string, options?: Options): TSConfig** Synchronous `parseFile`.
+* **resolveConfig(config: TSConfig, filename: string, options?: Options): Promise<TSConfig>** Expand a raw `tsconfig.json` object.
+* **resolveConfigSync(config: TSConfig, filename: string, options?: Options): TSConfig** Synchronous `resolveConfig`.
+
+The `TSConfig` result will _always_ contain an expanded `files` array (from either `filesGlob` or `exclude`). Both `files` and `exclude` will be resolved relative to the `tsconfig.json` file.
+
+### Options
+
+* **compilerOptions** Default compiler options to apply on expansion.
 
 ## Contributing
 

@@ -1,0 +1,15 @@
+{
+  "filesGlob": [
+    "!foo/**/*.ts",
+    "foo/bar.ts"
+  ],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true
+  },
+  "files": [],
+  "exclude": []
+}

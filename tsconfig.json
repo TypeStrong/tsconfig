@@ -12,7 +12,10 @@
     "src/tsconfig.ts",
     "src/tsconfig.spec.ts",
     "typings/tsd.d.ts",
+    "src/typings/array-uniq.d.ts",
     "src/typings/xtend.d.ts",
+    "src/typings/pinkie-promise.d.ts",
+    "src/typings/globby.d.ts",
     "src/typings/strip-bom.d.ts",
     "src/typings/parse-json.d.ts"
   ]
