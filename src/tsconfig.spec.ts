@@ -158,6 +158,20 @@ describe('tsconfig', function () {
         filesGlob: ['a/**/*.ts', 'b/**/*.ts']
       },
       filename: join(__dirname, '../tests/glob-multi/tsconfig.json')
+    },
+    {
+      path: join(__dirname, '../tests/es6'),
+      result: {
+        compilerOptions: {
+          declaration: false,
+          noImplicitAny: false,
+          removeComments: true,
+          target: 'es6'
+        },
+        exclude: [],
+        files: []
+      },
+      filename: join(__dirname, '../tests/es6/tsconfig.json'),
     }
   ]
 
