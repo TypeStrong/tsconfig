@@ -44,8 +44,11 @@
   },
   "homepage": "https://github.com/TypeStrong/tsconfig",
   "dependencies": {
+    "array-uniq": "^1.0.2",
     "glob": "^5.0.15",
+    "globby": "^3.0.1",
     "parse-json": "^2.2.0",
+    "pinkie-promise": "^1.0.0",
     "strip-bom": "^2.0.0",
     "xtend": "^4.0.0"
   },

@@ -19,6 +19,9 @@
     },
     "minimatch/minimatch.d.ts": {
       "commit": "66f88ec51858bb21bc375fa91a963c04bc09401e"
+    },
+    "es6-promise/es6-promise.d.ts": {
+      "commit": "3fc1377ce29dd9670975cb68615edf1b819fc4a5"
     }
   }
 }

@@ -7,25 +7,35 @@ interface Test {
   result?: tsconfig.TSConfig
   error?: string
   filename?: string
+  options?: tsconfig.Options
 }
 
 describe('tsconfig', function () {
   const tests: Test[] = [
     {
       path: join(__dirname, '../..'),
-      error: 'No config file found'
+      error: 'Unable to resolve config file'
     },
     {
       path: join(__dirname, '../tests/invalidfile'),
       error: `Unexpected token 's' at 1:1 in ${join(__dirname, '../tests/invalidfile/tsconfig.json')}\nsome random string\n^`
     },
     {
+      path: join(__dirname, '../tests/empty'),
+      result: {
+        compilerOptions: {},
+        files: [
+          join(__dirname, '../tests/empty/cwd.ts'),
+          join(__dirname, '../tests/empty/foo/bar.ts')
+        ],
+        exclude: []
+      }
+    },
+    {
       path: join(__dirname, '../tests/valid'),
       result: {
         compilerOptions: {
-          target: 'es5',
           module: 'commonjs',
-          declaration: false,
           noImplicitAny: true,
           out: '../../built/local/tsc.js',
           removeComments: true,
@@ -43,9 +53,7 @@ describe('tsconfig', function () {
       path: join(__dirname, '../tests/bom'),
       result: {
         compilerOptions: {
-          target: 'es5',
           module: 'commonjs',
-          declaration: false,
           noImplicitAny: true,
           outDir: 'dist',
           removeComments: true,
@@ -63,14 +71,8 @@ describe('tsconfig', function () {
       path: join(__dirname, '../tests/exclude'),
       result: {
         compilerOptions: {
-          target: 'es5',
           module: 'commonjs',
-          declaration: false,
-          noImplicitAny: true,
-          out: '../../built/local/tsc.js',
-          removeComments: true,
-          sourceMap: true,
-          preserveConstEnums: true
+          out: '../../built/local/tsc.js'
         },
         files: [
           join(__dirname, '../tests/exclude/included/foo.ts')
@@ -86,9 +88,7 @@ describe('tsconfig', function () {
       path: join(__dirname, '../tests/cwd'),
       result: {
         compilerOptions: {
-          target: 'es5',
           module: 'commonjs',
-          declaration: false,
           noImplicitAny: true,
           outDir: 'dist',
           removeComments: true,
@@ -107,13 +107,7 @@ describe('tsconfig', function () {
     {
       path: join(__dirname, '../tests/glob'),
       result: {
-        compilerOptions: {
-          declaration: false,
-          module: 'commonjs',
-          noImplicitAny: false,
-          removeComments: true,
-          target: 'es5'
-        },
+        compilerOptions: {},
         exclude: [],
         files: [
           join(__dirname, '../tests/glob/src/foo.ts')
@@ -125,13 +119,7 @@ describe('tsconfig', function () {
     {
       path: join(__dirname, '../tests/glob-negation'),
       result: {
-        compilerOptions: {
-          declaration: false,
-          module: 'commonjs',
-          noImplicitAny: false,
-          removeComments: true,
-          target: 'es5'
-        },
+        compilerOptions: {},
         exclude: [],
         files: [
           join(__dirname, '../tests/glob-negation/src/foo.ts')
@@ -142,6 +130,26 @@ describe('tsconfig', function () {
     },
     {
       path: join(__dirname, '../tests/glob-multi'),
+      options: {
+        compilerOptions: {
+          target: 'es6'
+        }
+      },
+      result: {
+        compilerOptions: {
+          target: 'es6'
+        },
+        exclude: [],
+        files: [
+          join(__dirname, '../tests/glob-multi/a/foo.ts'),
+          join(__dirname, '../tests/glob-multi/b/foo.ts')
+        ],
+        filesGlob: ['a/**/*.ts', 'b/**/*.ts']
+      },
+      filename: join(__dirname, '../tests/glob-multi/tsconfig.json')
+    },
+    {
+      path: join(__dirname, '../tests/glob-positive-negative'),
       result: {
         compilerOptions: {
           declaration: false,
@@ -152,12 +160,11 @@ describe('tsconfig', function () {
         },
         exclude: [],
         files: [
-          join(__dirname, '../tests/glob-multi/a/foo.ts'),
-          join(__dirname, '../tests/glob-multi/b/foo.ts')
+          join(__dirname, '../tests/glob-positive-negative/foo/bar.ts')
         ],
-        filesGlob: ['a/**/*.ts', 'b/**/*.ts']
+        filesGlob: ['!foo/**/*.ts', 'foo/bar.ts']
       },
-      filename: join(__dirname, '../tests/glob-multi/tsconfig.json')
+      filename: join(__dirname, '../tests/glob-positive-negative/tsconfig.json')
     }
   ]
 
@@ -168,7 +175,7 @@ describe('tsconfig', function () {
           let result: any
 
           try {
-            result = tsconfig.loadSync(test.path)
+            result = tsconfig.loadSync(test.path, test.options)
           } catch (err) {
             expect(err.message).to.equal(test.error)
 
@@ -190,25 +197,18 @@ describe('tsconfig', function () {
   describe('async', function () {
     tests.forEach(function (test) {
       describe(test.path, function () {
-        it('should try to find config', function (done) {
-          tsconfig.load(test.path, function (err, config) {
-            if (err) {
-              expect(err.message).to.equal(test.error)
-            } else {
-              expect(config).to.deep.equal(test.result)
-            }
-
-            return done()
-          })
+        it('should try to find config', function () {
+          return tsconfig.load(test.path, test.options)
+            .then(
+              config => expect(config).to.deep.equal(test.result),
+              error => expect(error.message).to.equal(test.error)
+            )
         })
 
         if (test.filename) {
-          it('should resolve filename', function (done) {
-            tsconfig.resolve(test.path, function (err, filename) {
-              expect(filename).to.equal(test.filename)
-
-              return done(err)
-            })
+          it('should resolve filename', function () {
+            return tsconfig.resolve(test.path)
+              .then(filename => expect(filename).to.equal(test.filename))
           })
         }
       })
