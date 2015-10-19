@@ -140,10 +140,7 @@ export function resolveConfig (data: TSConfig, filename: string, options?: Optio
   const filesGlob = getGlob(data)
 
   if (filesGlob) {
-    return glob(filesGlob, globOptions({
-      cwd: path.dirname(filename),
-      nodir: true
-    }))
+    return glob(filesGlob, globOptions(filename))
       .then(files => sanitizeConfig(data, files, filename, options))
   }
 
@@ -157,10 +154,7 @@ export function resolveConfigSync (data: TSConfig, filename: string, options?: O
   const filesGlob = getGlob(data)
 
   if (filesGlob) {
-    return sanitizeConfig(data, glob.sync(filesGlob, globOptions({
-      cwd: path.dirname(filename),
-      nodir: true
-    })), filename, options)
+    return sanitizeConfig(data, glob.sync(filesGlob, globOptions(filename)), filename, options)
   }
 
   return sanitizeConfig(data, null, filename, options)
@@ -246,13 +240,16 @@ function sanitizeFilenames (filenames: string[], dirname: string) {
  *
  * TODO: Remove when sindresorhus/globby#18 is resolved.
  */
-function globOptions (options: glob.Options): glob.Options {
-  return extend({
+function globOptions (filename: string): glob.Options {
+  return {
     cache: {},
     statCache: {},
     realpathCache: {},
-    symlinks: {}
-  }, options)
+    symlinks: {},
+    nodir: true,
+    follow: true,
+    cwd: path.dirname(filename)
+  }
 }
 
 /**
