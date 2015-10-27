@@ -1,6 +1,6 @@
 {
   "name": "tsconfig",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "TypeScript project file specification + implementation",
   "main": "dist/tsconfig.js",
   "typings": "dist/tsconfig.d.ts",
