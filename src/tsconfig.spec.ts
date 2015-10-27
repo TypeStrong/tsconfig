@@ -27,8 +27,7 @@ describe('tsconfig', function () {
         files: [
           join(__dirname, '../tests/empty/cwd.ts'),
           join(__dirname, '../tests/empty/foo/bar.ts')
-        ],
-        exclude: []
+        ]
       }
     },
     {
@@ -44,8 +43,7 @@ describe('tsconfig', function () {
         },
         files: [
           join(__dirname, '../tests/valid/src/foo.ts')
-        ],
-        exclude: []
+        ]
       },
       filename: join(__dirname, '../tests/valid/tsconfig.json')
     },
@@ -62,8 +60,7 @@ describe('tsconfig', function () {
         },
         files: [
           join(__dirname, '../tests/bom/src/bom.ts')
-        ],
-        exclude: []
+        ]
       },
       filename: join(__dirname, '../tests/bom/tsconfig.json')
     },
@@ -99,8 +96,7 @@ describe('tsconfig', function () {
           join(__dirname, '../tests/cwd/foo.d.ts'),
           join(__dirname, '../tests/cwd/foo.ts'),
           join(__dirname, '../tests/cwd/foo.tsx')
-        ],
-        exclude: []
+        ]
       },
       filename: join(__dirname, '../tests/cwd/tsconfig.json')
     },
@@ -108,7 +104,6 @@ describe('tsconfig', function () {
       path: join(__dirname, '../tests/glob'),
       result: {
         compilerOptions: {},
-        exclude: [],
         files: [
           join(__dirname, '../tests/glob/src/foo.ts')
         ],
@@ -120,7 +115,6 @@ describe('tsconfig', function () {
       path: join(__dirname, '../tests/glob-negation'),
       result: {
         compilerOptions: {},
-        exclude: [],
         files: [
           join(__dirname, '../tests/glob-negation/src/foo.ts')
         ],
@@ -139,7 +133,6 @@ describe('tsconfig', function () {
         compilerOptions: {
           target: 'es6'
         },
-        exclude: [],
         files: [
           join(__dirname, '../tests/glob-multi/a/foo.ts'),
           join(__dirname, '../tests/glob-multi/b/foo.ts')
@@ -150,6 +143,9 @@ describe('tsconfig', function () {
     },
     {
       path: join(__dirname, '../tests/glob-positive-negative'),
+      options: {
+        resolvePaths: false
+      },
       result: {
         compilerOptions: {
           declaration: false,
@@ -160,11 +156,25 @@ describe('tsconfig', function () {
         },
         exclude: [],
         files: [
-          join(__dirname, '../tests/glob-positive-negative/foo/bar.ts')
+          'foo/bar.ts'
         ],
         filesGlob: ['!foo/**/*.ts', 'foo/bar.ts']
       },
       filename: join(__dirname, '../tests/glob-positive-negative/tsconfig.json')
+    },
+    {
+      path: join(__dirname, '../tests/mixed'),
+      options: {
+        filterDefinitions: true,
+        resolvePaths: false
+      },
+      result: {
+        compilerOptions: {},
+        files: [
+          'bar.d.ts'
+        ]
+      },
+      filename: join(__dirname, '../tests/mixed/tsconfig.json')
     }
   ]
 

@@ -21,6 +21,8 @@ export interface TSConfig {
 
 export interface Options {
   compilerOptions?: CompilerOptions
+  filterDefinitions?: boolean
+  resolvePaths?: boolean
 }
 
 const CONFIG_FILENAME = 'tsconfig.json'
@@ -144,7 +146,7 @@ export function resolveConfig (data: TSConfig, filename: string, options?: Optio
       .then(files => sanitizeConfig(data, files, filename, options))
   }
 
-  return Promise.resolve(sanitizeConfig(data, null, filename, options))
+  return Promise.resolve(sanitizeConfig(data, data.files, filename, options))
 }
 
 /**
@@ -157,7 +159,7 @@ export function resolveConfigSync (data: TSConfig, filename: string, options?: O
     return sanitizeConfig(data, glob.sync(filesGlob, globOptions(filename)), filename, options)
   }
 
-  return sanitizeConfig(data, null, filename, options)
+  return sanitizeConfig(data, data.files, filename, options)
 }
 
 /**
@@ -190,14 +192,31 @@ function getGlob (data: TSConfig): string[] {
 /**
  * Sanitize tsconfig options.
  */
-function sanitizeConfig (data: TSConfig, files: string[], filename: string, options: Options = {}): TSConfig {
+function sanitizeConfig (data: TSConfig, rawFiles: string[], filename: string, options: Options = {}): TSConfig {
   const dirname = path.dirname(filename)
+  const sanitize = options.resolvePaths !== false
+  const filter = options.filterDefinitions === true
+  const compilerOptions = extend(options.compilerOptions, data.compilerOptions)
+  const tsconfig = extend(data, { compilerOptions })
 
-  return extend(data, {
-    compilerOptions: extend(options.compilerOptions, data.compilerOptions),
-    files: sanitizeFilenames(files || data.files, dirname),
-    exclude: sanitizeFilenames(data.exclude, dirname)
-  })
+  if (rawFiles != null) {
+    const files = sanitize ? resolvePaths(rawFiles, dirname) : rawFiles
+
+    tsconfig.files = filter ? filterDefinitions(files) : files
+  }
+
+  if (data.exclude != null) {
+    tsconfig.exclude = sanitize ? resolvePaths(data.exclude, dirname) : data.exclude
+  }
+
+  return tsconfig
+}
+
+/**
+ * Filter for definition files.
+ */
+function filterDefinitions (files: string[]) {
+  return Array.isArray(files) ? files.filter(x => /\.d\.ts$/.test(x)) : files
 }
 
 /**
@@ -227,12 +246,8 @@ function fileExistsSync (filename: string): boolean {
 /**
  * Sanitize an array of file names to absolute paths.
  */
-function sanitizeFilenames (filenames: string[], dirname: string) {
-  if (!filenames) {
-    return []
-  }
-
-  return uniq(filenames.map(filename => path.resolve(dirname, filename)))
+function resolvePaths (paths: string[], dirname: string) {
+  return paths ? uniq(paths.map(x => path.resolve(dirname, x))) : undefined
 }
 
 /**

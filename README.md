@@ -28,7 +28,9 @@ The `TSConfig` result will _always_ contain an expanded `files` array (from eith
 
 ### Options
 
-* **compilerOptions** Default compiler options to apply on expansion.
+* **compilerOptions** Default compiler options to apply on expansion (default: `{}`).
+* **filterDefinitions** Return a list files which are only `.d.ts` files (default: `false`).
+* **resolvePaths** Resolve paths to absolute and remove duplicate entries (default: `true`).
 
 ## Contributing
 
