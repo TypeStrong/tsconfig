@@ -138,7 +138,7 @@ export function parseFileSync (contents: string, filename: string, options?: Opt
 /**
  * Expand a configuration object.
  */
-export function resolveConfig (data: TSConfig, filename: string, options?: Options) {
+export function resolveConfig (data: TSConfig, filename: string, options?: Options): Promise<TSConfig> {
   const filesGlob = getGlob(data)
 
   if (filesGlob) {
