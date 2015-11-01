@@ -1,0 +1,15 @@
+{
+  "ambientDependencies": {
+    "chai": "https://raw.githubusercontent.com/borisyankov/DefinitelyTyped/66f88ec51858bb21bc375fa91a963c04bc09401e/chai/chai.d.ts",
+    "mocha": "https://raw.githubusercontent.com/borisyankov/DefinitelyTyped/66f88ec51858bb21bc375fa91a963c04bc09401e/mocha/mocha.d.ts",
+    "node": "https://raw.githubusercontent.com/borisyankov/DefinitelyTyped/66f88ec51858bb21bc375fa91a963c04bc09401e/node/node.d.ts"
+  },
+  "dependencies": {
+    "array-uniq": "https://raw.githubusercontent.com/typings/typed-array-uniq/fe1767e9b1baa0fd9f7a55fbcbf2fd8f08296d42/typings.json",
+    "globby": "https://raw.githubusercontent.com/typings/typed-globby/9624dd0875f851656c93132c63e6cafa78641334/typings.json",
+    "parse-json": "https://raw.githubusercontent.com/typings/typed-parse-json/74152f9c8b831227fc4eb3533fcd01b8906e2694/typings.json",
+    "pinkie-promise": "https://raw.githubusercontent.com/typings/typed-pinkie-promise/680fa32baa4e45e4a13b0c823f4db62ff47990e8/typings.json",
+    "strip-bom": "https://raw.githubusercontent.com/typings/typed-strip-bom/d1d42e7f43dcd9fce1cfd988c40421a1d37fa47b/typings.json",
+    "xtend": "https://raw.githubusercontent.com/typings/typed-xtend/63cccadf3295b3c15561ee45617ac006edcca9e0/typings.json"
+  }
+}
