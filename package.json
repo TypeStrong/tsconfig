@@ -7,7 +7,7 @@
   "files": [
     "dist/",
     "LICENSE",
-    "tsconfig.d.ts"
+    "typings.json"
   ],
   "scripts": {
     "lint": "echo TODO",
