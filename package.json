@@ -48,6 +48,7 @@
     "parse-json": "^2.2.0",
     "pinkie-promise": "^2.0.0",
     "strip-bom": "^2.0.0",
+    "strip-json-comments": "^2.0.0",
     "xtend": "^4.0.0"
   },
   "devDependencies": {

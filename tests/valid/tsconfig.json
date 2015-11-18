@@ -1,4 +1,5 @@
-{ 
+{
+    // Compiler options.
     "compilerOptions": {
         "module": "commonjs",
         "noImplicitAny": true,
@@ -7,7 +8,8 @@
         "out": "../../built/local/tsc.js",
         "sourceMap": true
     },
+    // These are the files to compile with.
     "files": [
-        "./src/foo.ts"
+        "./src/foo.ts" /* Use `foo.ts` */
     ]
 }

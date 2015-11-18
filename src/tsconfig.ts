@@ -6,6 +6,7 @@ import stripBom = require('strip-bom')
 import parseJson = require('parse-json')
 import Promise = require('pinkie-promise')
 import uniq = require('array-uniq')
+import stripComments = require('strip-json-comments')
 
 export interface CompilerOptions {
   [key: string]: any
@@ -271,10 +272,10 @@ function globOptions (filename: string): glob.Options {
  * Parse `tsconfig.json` file.
  */
 function parseContent (contents: string, filename: string) {
-  const data = stripBom(contents)
+  const data = stripComments(stripBom(contents))
 
   // A tsconfig.json file is permitted to be completely empty.
-  if (data === '') {
+  if (/^\s*$/.test(data)) {
     return {}
   }
 
