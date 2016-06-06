@@ -11,6 +11,6 @@
   "files": [
     "src/tsconfig.ts",
     "src/tsconfig.spec.ts",
-    "typings/main.d.ts"
+    "typings/index.d.ts"
   ]
 }

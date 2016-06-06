@@ -15,7 +15,7 @@
     "test-spec": "mocha dist/**/*.spec.js -R spec --bail",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- dist/**/*.spec.js -R spec --bail",
     "test": "npm run build && npm run lint && npm run test-cov",
-    "prepublish": "npm run build"
+    "prepublish": "typings install && npm run build"
   },
   "repository": {
     "type": "git",
@@ -55,6 +55,7 @@
     "chai": "^3.0.0",
     "istanbul": "^0.4.0",
     "mocha": "^2.0.1",
-    "typescript": "^1.5.0-beta"
+    "typescript": "^1.8.10",
+    "typings": "^1.0.4"
   }
 }
