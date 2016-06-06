@@ -29,9 +29,36 @@ export interface Options {
 const CONFIG_FILENAME = 'tsconfig.json'
 
 /**
+ * Resolve a `tsconfig.json` file.
+ */
+export function resolve (path: string): Promise<string | void> {
+  return fileExists(path)
+    .then(exists => {
+      if (exists) {
+        return path
+      }
+
+      return find(path)
+    })
+}
+
+/**
+ * Synchronous `resolve`.
+ */
+export function resolveSync (path: string): string | void {
+  const exists = fileExistsSync(path)
+
+  if (exists) {
+    return path
+  }
+
+  return findSync(path)
+}
+
+/**
  * Resolve `tsconfig.json` from a directory.
  */
-export function resolve (dir: string): Promise<string> {
+export function find (dir: string): Promise<string | void> {
   const configFile = path.resolve(dir, CONFIG_FILENAME)
 
   return fileExists(configFile)
@@ -46,14 +73,14 @@ export function resolve (dir: string): Promise<string> {
         return
       }
 
-      return resolve(parentDir)
+      return find(parentDir)
     })
 }
 
 /**
- * Synchronous `resolve`.
+ * Synchronous `find`.
  */
-export function resolveSync (dir: string): string {
+export function findSync (dir: string): string | void {
   const configFile = path.resolve(dir, CONFIG_FILENAME)
 
   if (fileExistsSync(configFile)) {
@@ -66,7 +93,7 @@ export function resolveSync (dir: string): string {
     return
   }
 
-  return resolveSync(parentDir)
+  return findSync(parentDir)
 }
 
 /**
@@ -79,7 +106,7 @@ export function load (dir: string, options?: Options): Promise<TSConfig> {
         return Promise.reject(new Error('Unable to resolve config file'))
       }
 
-      return readFile(filename, options)
+      return readFile(filename as string, options)
     })
 }
 
@@ -93,13 +120,13 @@ export function loadSync (dir: string, options?: Options): TSConfig {
     throw new Error('Unable to resolve config file')
   }
 
-  return readFileSync(filename, options)
+  return readFileSync(filename as string, options)
 }
 
 /**
  * Read `tsconfig.json` and parse/sanitize contents.
  */
-export function readFile (filename: string, options?: Options) {
+export function readFile (filename: string, options?: Options): Promise<TSConfig> {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, 'utf8', (err, contents) => {
       if (err) {

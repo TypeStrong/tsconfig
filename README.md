@@ -13,10 +13,10 @@ See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.
 
 ### API
 
-* **resolve(dir: string): Promise<string>** Find up the location of `tsconfig.json`.
-* **resolveSync(dir: string): string** Synchronous `resolve`.
-* **load(dir: string, options?: Options): Promise<TSConfig>** Resolve, load and parse `tsconfig.json`.
-* **loadSync(dir: string): TSConfig** Synchronous `load`.
+* **resolve(path: string): Promise<string>** Read the location of `tsconfig.json`.
+* **resolveSync(path: string): string** Synchronous `resolve`.
+* **load(path: string, options?: Options): Promise<TSConfig>** Resolve, load and parse `tsconfig.json`.
+* **loadSync(path: string): TSConfig** Synchronous `load`.
 * **readFile(filename: string, options?: Options): Promise<TSConfig>** Read a file as `tsconfig.json` (BOM, JSON parse, empty file and `files` expansion).
 * **readFileSync(filename: string, options?: Options): TSConfig** Synchronous `readFile`.
 * **parseFile(contents: string, filename: string, options?: Options): Promise<TSConfig>** Parse a string as `tsconfig.json` (BOM, JSON parse, empty contents and expansion).
