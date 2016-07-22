@@ -5,16 +5,9 @@ import stripBom = require('strip-bom')
 import parseJson = require('parse-json')
 import stripComments = require('strip-json-comments')
 
-export interface CompilerOptions {
-  [key: string]: any
-}
-
-export interface TSConfig {
-  compilerOptions?: CompilerOptions
-  files?: string[]
-  include?: string[]
-  exclude?: string[]
-  [key: string]: any
+export interface LoadResult {
+  path?: string
+  config?: any
 }
 
 const CONFIG_FILENAME = 'tsconfig.json'
@@ -126,26 +119,40 @@ export function findSync (dir: string): string | void {
 /**
  * Resolve and load configuration file.
  */
-export function load (cwd: string, filename?: string): Promise<TSConfig> {
+export function load (cwd: string, filename?: string): Promise<LoadResult> {
   return resolve(cwd, filename)
-    .then(path => {
-      return path == null ? Promise.resolve({}) : readFile(path as string)
+    .then<LoadResult>(path => {
+      if (path == null) {
+        return Promise.resolve({
+          config: {}
+        })
+      }
+
+      return readFile(path as string).then(config => ({ config, path }))
     })
 }
 
 /**
  * Synchronous `load`.
  */
-export function loadSync (cwd: string, filename?: string): TSConfig {
+export function loadSync (cwd: string, filename?: string): LoadResult {
   const path = resolveSync(cwd, filename)
 
-  return path == null ? {} : readFileSync(path as string)
+  if (path == null) {
+    return {
+      config: {}
+    }
+  }
+
+  const config = readFileSync(path as string)
+
+  return { path: path as string, config }
 }
 
 /**
  * Read `tsconfig.json` and parse/sanitize contents.
  */
-export function readFile (filename: string): Promise<TSConfig> {
+export function readFile (filename: string): Promise<any> {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, 'utf8', (err, contents) => {
       if (err) {
@@ -164,7 +171,7 @@ export function readFile (filename: string): Promise<TSConfig> {
 /**
  * Synchonrous `readFile`.
  */
-export function readFileSync (filename: string): TSConfig {
+export function readFileSync (filename: string): any {
   const contents = fs.readFileSync(filename, 'utf8')
 
   return parse(contents, filename)

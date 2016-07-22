@@ -6,45 +6,48 @@ import * as tsconfig from './tsconfig'
 const TEST_DIR = join(__dirname, '../tests')
 
 interface Test {
-  path: [string] | [string, string]
-  result?: tsconfig.TSConfig
+  args: [string] | [string, string]
+  config?: any
+  path?: string
   error?: string
-  filename?: string
 }
 
 describe('tsconfig', function () {
   const tests: Test[] = [
     {
-      path: [TEST_DIR, 'invalidfile'],
+      args: [TEST_DIR, 'invalidfile'],
       error: `Unexpected token 's' at 1:1 in ${join(TEST_DIR, 'invalidfile/tsconfig.json')}\nsome random string\n^`
     },
     {
-      path: [TEST_DIR, 'missing'],
+      args: [TEST_DIR, 'missing'],
       error: 'Cannot find a tsconfig.json file at the specified directory: missing'
     },
     {
-      path: [TEST_DIR, 'missing/foobar'],
+      args: [TEST_DIR, 'missing/foobar'],
       error: 'The specified path does not exist: missing/foobar'
     },
     {
-      path: ['/'],
-      result: {}
+      args: ['/'],
+      config: {}
     },
     {
-      path: [TEST_DIR, 'empty'],
-      result: {}
+      args: [TEST_DIR, 'empty'],
+      config: {},
+      path: join(TEST_DIR, 'empty/tsconfig.json')
     },
     {
-      path: [TEST_DIR, 'empty/tsconfig.json'],
-      result: {}
+      args: [TEST_DIR, 'empty/tsconfig.json'],
+      config: {},
+      path: join(TEST_DIR, 'empty/tsconfig.json')
     },
     {
-      path: [join(TEST_DIR, 'find/up/config')],
-      result: {}
+      args: [join(TEST_DIR, 'find/up/config')],
+      config: {},
+      path: join(TEST_DIR, 'find/tsconfig.json')
     },
     {
-      path: [TEST_DIR, 'valid'],
-      result: {
+      args: [TEST_DIR, 'valid'],
+      config: {
         compilerOptions: {
           module: 'commonjs',
           noImplicitAny: true,
@@ -57,11 +60,11 @@ describe('tsconfig', function () {
           './src/foo.ts'
         ]
       },
-      filename: join(__dirname, '../tests/valid/tsconfig.json')
+      path: join(TEST_DIR, 'valid/tsconfig.json')
     },
     {
-      path: [TEST_DIR, 'bom'],
-      result: {
+      args: [TEST_DIR, 'bom'],
+      config: {
         compilerOptions: {
           module: 'commonjs',
           noImplicitAny: true,
@@ -74,11 +77,11 @@ describe('tsconfig', function () {
           './src/bom.ts'
         ]
       },
-      filename: join(__dirname, '../tests/bom/tsconfig.json')
+      path: join(TEST_DIR, 'bom/tsconfig.json')
     },
     {
-      path: [join(TEST_DIR, 'cwd')],
-      result: {
+      args: [join(TEST_DIR, 'cwd')],
+      config: {
         compilerOptions: {
           module: 'commonjs',
           noImplicitAny: true,
@@ -88,30 +91,31 @@ describe('tsconfig', function () {
           preserveConstEnums: true
         }
       },
-      filename: join(__dirname, '../tests/cwd/tsconfig.json')
+      path: join(TEST_DIR, 'cwd/tsconfig.json')
     }
   ]
 
   describe('sync', function () {
     tests.forEach(function (test) {
-      describe(inspect(test.path), function () {
+      describe(inspect(test.args), function () {
         it('should try to find config', function () {
           let result: any
 
           try {
-            result = tsconfig.loadSync(test.path[0], test.path[1])
+            result = tsconfig.loadSync(test.args[0], test.args[1])
           } catch (err) {
             expect(err.message).to.equal(test.error)
 
             return
           }
 
-          expect(result).to.deep.equal(test.result)
+          expect(result.path).to.equal(test.path)
+          expect(result.config).to.deep.equal(test.config)
         })
 
-        if (test.filename) {
+        if (test.path) {
           it('should resolve filename', function () {
-            expect(tsconfig.resolveSync(test.path[0], test.path[1])).to.equal(test.filename)
+            expect(tsconfig.resolveSync(test.args[0], test.args[1])).to.equal(test.path)
           })
         }
       })
@@ -120,19 +124,26 @@ describe('tsconfig', function () {
 
   describe('async', function () {
     tests.forEach(function (test) {
-      describe(inspect(test.path), function () {
+      describe(inspect(test.args), function () {
         it('should try to find config', function () {
-          return tsconfig.load(test.path[0], test.path[1])
+          return tsconfig.load(test.args[0], test.args[1])
             .then(
-              config => expect(config).to.deep.equal(test.result),
-              error => expect(error.message).to.equal(test.error)
+              result => {
+                expect(result.path).to.equal(test.path)
+                expect(result.config).to.deep.equal(test.config)
+              },
+              error => {
+                expect(error.message).to.equal(test.error)
+              }
             )
         })
 
-        if (test.filename) {
+        if (test.path) {
           it('should resolve filename', function () {
-            return tsconfig.resolve(test.path[0], test.path[1])
-              .then(filename => expect(filename).to.equal(test.filename))
+            return tsconfig.resolve(test.args[0], test.args[1])
+              .then(filename => {
+                expect(filename).to.equal(test.path)
+              })
           })
         }
       })
