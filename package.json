@@ -1,6 +1,6 @@
 {
   "name": "tsconfig",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Resole and parse `tsconfig.json`, replicating to TypeScript's behaviour",
   "main": "dist/tsconfig.js",
   "files": [
