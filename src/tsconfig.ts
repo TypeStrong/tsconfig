@@ -20,7 +20,7 @@ export function resolve (cwd: string, filename?: string): Promise<string | void>
     return find(cwd)
   }
 
-  const fullPath = path.join(cwd, filename)
+  const fullPath = path.resolve(cwd, filename)
 
   return stat(fullPath)
     .then<string | void>(stats => {
@@ -53,7 +53,7 @@ export function resolveSync (cwd: string, filename?: string): string | void {
     return findSync(cwd)
   }
 
-  const fullPath = path.join(cwd, filename)
+  const fullPath = path.resolve(cwd, filename)
   const stats = statSync(fullPath)
 
   if (isFile(stats)) {
