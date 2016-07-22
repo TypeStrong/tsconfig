@@ -17,8 +17,8 @@ See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.
 * **resolveSync(cwd: string, path?: string): string | void** Synchronous `resolve`.
 * **find(cwd: string): Promise<string | void>** Standalone behaviour of recursively resolving `tsconfig.json` upward.
 * **findSync(cwd: string): string | void** Synchronous `find`.
-* **load(cwd: string, path?: string): Promise<{ path?: string, config?: any}>** Resolve, load and parse `tsconfig.json`.
-* **loadSync(cwd: string, path?: string): { path?: string, config?: any}** Synchronous `load`.
+* **load(cwd: string, path?: string): Promise<{ path?: string, config: any }>** Resolve, load and parse `tsconfig.json`.
+* **loadSync(cwd: string, path?: string): { path?: string, config: any }** Synchronous `load`.
 * **readFile(filename: string): Promise<any>** Read a JSON file as `tsconfig.json` (strip BOM, parse JSON and support empty contents).
 * **readFileSync(filename: string): any** Synchronous `readFile`.
 * **parse(contents: string, filename: string): any** Parse file contents as `tsconfig.json` (strip BOM, parse JSON and support empty contents).

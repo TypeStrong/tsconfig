@@ -7,7 +7,7 @@ import stripComments = require('strip-json-comments')
 
 export interface LoadResult {
   path?: string
-  config?: any
+  config: any
 }
 
 const CONFIG_FILENAME = 'tsconfig.json'
@@ -123,12 +123,12 @@ export function load (cwd: string, filename?: string): Promise<LoadResult> {
   return resolve(cwd, filename)
     .then<LoadResult>(path => {
       if (path == null) {
-        return Promise.resolve({
+        return Promise.resolve<LoadResult>({
           config: {}
         })
       }
 
-      return readFile(path as string).then(config => ({ config, path }))
+      return readFile(path as string).then(config => ({ path: path as string, config }))
     })
 }
 
