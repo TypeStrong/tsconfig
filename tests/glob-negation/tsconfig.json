@@ -1,7 +1,0 @@
-{
-    "filesGlob": [
-        "!test/**/*"
-    ],
-    "compilerOptions": {},
-    "files": []
-}

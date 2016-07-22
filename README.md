@@ -5,36 +5,35 @@
 [![Build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
 
-Resolve and parse [`tsconfig.json`](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json), with support for `filesGlob` (array of glob strings).
+Resolve and parse [`tsconfig.json`](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json), replicating TypeScript's behaviour.
 
 ## Usage
 
-See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json) for information on setting up `tsconfig.json`. Additionally, this module will parse the `filesGlob` option, if it exists.
+See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json) for information on setting up `tsconfig.json`.
 
 ### API
 
-* **resolve(path: string): Promise<string>** Read the location of `tsconfig.json`.
-* **resolveSync(path: string): string** Synchronous `resolve`.
-* **load(path: string, options?: Options): Promise<TSConfig>** Resolve, load and parse `tsconfig.json`.
-* **loadSync(path: string): TSConfig** Synchronous `load`.
-* **readFile(filename: string, options?: Options): Promise<TSConfig>** Read a file as `tsconfig.json` (BOM, JSON parse, empty file and `files` expansion).
-* **readFileSync(filename: string, options?: Options): TSConfig** Synchronous `readFile`.
-* **parseFile(contents: string, filename: string, options?: Options): Promise<TSConfig>** Parse a string as `tsconfig.json` (BOM, JSON parse, empty contents and expansion).
-* **parseFileSync(contents: string, filename: string, options?: Options): TSConfig** Synchronous `parseFile`.
-* **resolveConfig(config: TSConfig, filename: string, options?: Options): Promise<TSConfig>** Expand a raw `tsconfig.json` object.
-* **resolveConfigSync(config: TSConfig, filename: string, options?: Options): TSConfig** Synchronous `resolveConfig`.
-
-The `TSConfig` result will _always_ contain an expanded `files` array (from either `filesGlob` or `exclude`). Both `files` and `exclude` will be resolved relative to the `tsconfig.json` file.
-
-### Options
-
-* **compilerOptions** Default compiler options to apply on expansion (default: `{}`).
-* **filterDefinitions** Return a list files which are only `.d.ts` files (default: `false`).
-* **resolvePaths** Resolve paths to absolute and remove duplicate entries (default: `true`).
+* **resolve(cwd: string, path?: string): Promise<string | void>** Resolve `tsconfig.json`, like TypeScript, allowing a path to be specified and falling back to recursively resolving `tsconfig.json` upward when no path is specified.
+* **resolveSync(cwd: string, path?: string): string | void** Synchronous `resolve`.
+* **find(cwd: string): Promise<string | void>** Standalone behaviour of recursively resolving `tsconfig.json` upward.
+* **findSync(cwd: string): string | void** Synchronous `find`.
+* **load(cwd: string, path?: string): Promise<TSConfig>** Resolve, load and parse `tsconfig.json`.
+* **loadSync(cwd: string, path?: string): TSConfig** Synchronous `load`.
+* **readFile(filename: string): Promise<TSConfig>** Read a JSON file as `tsconfig.json` (strip BOM, parse JSON and support empty contents).
+* **readFileSync(filename: string): TSConfig** Synchronous `readFile`.
+* **parse(contents: string, filename: string): TSConfig** Parse file contents as `tsconfig.json` (strip BOM, parse JSON and support empty contents).
 
 ## Contributing
 
-Please open issues for discussion.
+Feel free to open issues for discussion.
+
+```sh
+# Install dependencies/typings.
+npm install
+
+# Run test suite.
+npm test
+```
 
 ## License
 

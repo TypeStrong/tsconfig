@@ -1,11 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import glob = require('globby')
-import extend = require('xtend')
+import Promise = require('any-promise')
 import stripBom = require('strip-bom')
 import parseJson = require('parse-json')
-import Promise = require('pinkie-promise')
-import uniq = require('array-uniq')
 import stripComments = require('strip-json-comments')
 
 export interface CompilerOptions {
@@ -15,44 +12,73 @@ export interface CompilerOptions {
 export interface TSConfig {
   compilerOptions?: CompilerOptions
   files?: string[]
+  include?: string[]
   exclude?: string[]
-  filesGlob?: string[]
   [key: string]: any
-}
-
-export interface Options {
-  compilerOptions?: CompilerOptions
-  filterDefinitions?: boolean
-  resolvePaths?: boolean
 }
 
 const CONFIG_FILENAME = 'tsconfig.json'
 
 /**
- * Resolve a `tsconfig.json` file.
+ * Resolve a configuration file, like `tsc`.
  */
-export function resolve (path: string): Promise<string | void> {
-  return fileExists(path)
-    .then(exists => {
-      if (exists) {
-        return path
+export function resolve (cwd: string, filename?: string): Promise<string | void> {
+  if (!filename) {
+    return find(cwd)
+  }
+
+  const fullPath = path.join(cwd, filename)
+
+  return stat(fullPath)
+    .then<string | void>(stats => {
+      if (isFile(stats)) {
+        return fullPath
       }
 
-      return find(path)
+      if (isDirectory(stats)) {
+        const configFile = path.join(fullPath, CONFIG_FILENAME)
+
+        return stat(configFile)
+          .then(stats => {
+            if (isFile(stats)) {
+              return configFile
+            }
+
+            throw new TypeError(`Cannot find a ${CONFIG_FILENAME} file at the specified directory: ${filename}`)
+          })
+      }
+
+      throw new TypeError(`The specified path does not exist: ${filename}`)
     })
 }
 
 /**
  * Synchronous `resolve`.
  */
-export function resolveSync (path: string): string | void {
-  const exists = fileExistsSync(path)
-
-  if (exists) {
-    return path
+export function resolveSync (cwd: string, filename?: string): string | void {
+  if (!filename) {
+    return findSync(cwd)
   }
 
-  return findSync(path)
+  const fullPath = path.join(cwd, filename)
+  const stats = statSync(fullPath)
+
+  if (isFile(stats)) {
+    return fullPath
+  }
+
+  if (isDirectory(stats)) {
+    const configFile = path.join(fullPath, CONFIG_FILENAME)
+    const stats = statSync(configFile)
+
+    if (isFile(stats)) {
+      return configFile
+    }
+
+    throw new TypeError(`Cannot find a ${CONFIG_FILENAME} file at the specified directory: ${filename}`)
+  }
+
+  throw new TypeError(`The specified path does not exist: ${filename}`)
 }
 
 /**
@@ -61,9 +87,9 @@ export function resolveSync (path: string): string | void {
 export function find (dir: string): Promise<string | void> {
   const configFile = path.resolve(dir, CONFIG_FILENAME)
 
-  return fileExists(configFile)
-    .then(exists => {
-      if (exists) {
+  return stat(configFile)
+    .then(stats => {
+      if (isFile(stats)) {
         return configFile
       }
 
@@ -82,8 +108,9 @@ export function find (dir: string): Promise<string | void> {
  */
 export function findSync (dir: string): string | void {
   const configFile = path.resolve(dir, CONFIG_FILENAME)
+  const stats = statSync(configFile)
 
-  if (fileExistsSync(configFile)) {
+  if (isFile(stats)) {
     return configFile
   }
 
@@ -97,43 +124,39 @@ export function findSync (dir: string): string | void {
 }
 
 /**
- * Load `tsconfig.json` from a start directory.
+ * Resolve and load configuration file.
  */
-export function load (dir: string, options?: Options): Promise<TSConfig> {
-  return resolve(dir)
-    .then(filename => {
-      if (!filename) {
-        return Promise.reject(new Error('Unable to resolve config file'))
-      }
-
-      return readFile(filename as string, options)
+export function load (cwd: string, filename?: string): Promise<TSConfig> {
+  return resolve(cwd, filename)
+    .then(path => {
+      return path == null ? Promise.resolve({}) : readFile(path as string)
     })
 }
 
 /**
  * Synchronous `load`.
  */
-export function loadSync (dir: string, options?: Options): TSConfig {
-  const filename = resolveSync(dir)
+export function loadSync (cwd: string, filename?: string): TSConfig {
+  const path = resolveSync(cwd, filename)
 
-  if (!filename) {
-    throw new Error('Unable to resolve config file')
-  }
-
-  return readFileSync(filename as string, options)
+  return path == null ? {} : readFileSync(path as string)
 }
 
 /**
  * Read `tsconfig.json` and parse/sanitize contents.
  */
-export function readFile (filename: string, options?: Options): Promise<TSConfig> {
+export function readFile (filename: string): Promise<TSConfig> {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, 'utf8', (err, contents) => {
       if (err) {
         return reject(err)
       }
 
-      return resolve(parseFile(contents, filename, options))
+      try {
+        return resolve(parse(contents, filename))
+      } catch (err) {
+        return reject(err)
+      }
     })
   })
 }
@@ -141,164 +164,16 @@ export function readFile (filename: string, options?: Options): Promise<TSConfig
 /**
  * Synchonrous `readFile`.
  */
-export function readFileSync (filename: string, options?: Options): TSConfig {
+export function readFileSync (filename: string): TSConfig {
   const contents = fs.readFileSync(filename, 'utf8')
 
-  return parseFileSync(contents, filename, options)
-}
-
-/**
- * Parse a configuration file and sanitize contents.
- */
-export function parseFile (contents: string, filename: string, options?: Options): Promise<TSConfig> {
-  return new Promise(resolve => {
-    return resolve(resolveConfig(parseContent(contents, filename), filename, options))
-  })
-}
-
-/**
- * Synchronous `parseFile`.
- */
-export function parseFileSync (contents: string, filename: string, options?: Options): TSConfig {
-  return resolveConfigSync(parseContent(contents, filename), filename, options)
-}
-
-/**
- * Expand a configuration object.
- */
-export function resolveConfig (data: TSConfig, filename: string, options?: Options): Promise<TSConfig> {
-  const filesGlob = getGlob(data)
-
-  if (filesGlob) {
-    return glob(filesGlob, globOptions(filename))
-      .then(files => sanitizeConfig(data, files, filename, options))
-  }
-
-  return Promise.resolve(sanitizeConfig(data, data.files, filename, options))
-}
-
-/**
- * Synchronous `resolveConfig`.
- */
-export function resolveConfigSync (data: TSConfig, filename: string, options?: Options): TSConfig {
-  const filesGlob = getGlob(data)
-
-  if (filesGlob) {
-    return sanitizeConfig(data, glob.sync(filesGlob, globOptions(filename)), filename, options)
-  }
-
-  return sanitizeConfig(data, data.files, filename, options)
-}
-
-/**
- * Get a glob from tsconfig.
- */
-function getGlob (data: TSConfig): string[] {
-  // Ensure the `filesGlob` does not exist before using `files`.
-  if (!Array.isArray(data.filesGlob) && Array.isArray(data.files)) {
-    return
-  }
-
-  let pattern: string[] = []
-
-  if (Array.isArray(data.filesGlob)) {
-    pattern = data.filesGlob.slice()
-  }
-
-  if (Array.isArray(data.exclude)) {
-    data.exclude.forEach(x => pattern.push(`!${x}/**`))
-  }
-
-  // If the patterns are only negative, push a match all TypeScript glob.
-  if (!pattern.some(x => x.charAt(0) !== '!')) {
-    pattern.unshift('**/*.ts', '**/*.tsx')
-  }
-
-  return pattern
-}
-
-/**
- * Sanitize tsconfig options.
- */
-function sanitizeConfig (data: TSConfig, rawFiles: string[], filename: string, options: Options = {}): TSConfig {
-  const dirname = path.dirname(filename)
-  const sanitize = options.resolvePaths !== false
-  const filter = options.filterDefinitions === true
-  const compilerOptions = extend(options.compilerOptions, data.compilerOptions)
-  const tsconfig = extend(data, { compilerOptions })
-
-  if (rawFiles != null) {
-    const files = sanitize ? resolvePaths(rawFiles, dirname) : rawFiles
-
-    tsconfig.files = filter ? filterDefinitions(files) : files
-  }
-
-  if (data.exclude != null) {
-    tsconfig.exclude = sanitize ? resolvePaths(data.exclude, dirname) : data.exclude
-  }
-
-  return tsconfig
-}
-
-/**
- * Filter for definition files.
- */
-function filterDefinitions (files: string[]) {
-  return Array.isArray(files) ? files.filter(x => /\.d\.ts$/.test(x)) : files
-}
-
-/**
- * Check if a file exists.
- */
-function fileExists (filename: string) {
-  return new Promise((resolve, reject) => {
-    fs.stat(filename, (err, stats) => {
-      return err ? resolve(false) : resolve(stats.isFile() || stats.isFIFO())
-    })
-  })
-}
-
-/**
- * Synchronously check if a file exists.
- */
-function fileExistsSync (filename: string): boolean {
-  try {
-    const stats = fs.statSync(filename)
-
-    return stats.isFile() || stats.isFIFO()
-  } catch (e) {
-    return false
-  }
-}
-
-/**
- * Sanitize an array of file names to absolute paths.
- */
-function resolvePaths (paths: string[], dirname: string) {
-  return paths ? uniq(paths.map(x => path.resolve(dirname, x))) : undefined
-}
-
-/**
- * Get glob options with default cache.
- *
- * TODO: Remove when sindresorhus/globby#18 is resolved.
- */
-function globOptions (filename: string): glob.Options {
-  return {
-    cache: {},
-    statCache: {},
-    realpathCache: {},
-    symlinks: {},
-    nodir: true,
-    follow: true,
-    cwd: path.dirname(filename)
-  }
+  return parse(contents, filename)
 }
 
 /**
  * Parse `tsconfig.json` file.
  */
-function parseContent (contents: string, filename: string) {
+export function parse (contents: string, filename: string) {
   const data = stripComments(stripBom(contents))
 
   // A tsconfig.json file is permitted to be completely empty.
@@ -307,4 +182,40 @@ function parseContent (contents: string, filename: string) {
   }
 
   return parseJson(data, null, filename)
+}
+
+/**
+ * Check if a file exists.
+ */
+function stat (filename: string): Promise<fs.Stats | void> {
+  return new Promise<fs.Stats>((resolve, reject) => {
+    fs.stat(filename, (err, stats) => {
+      return err ? resolve(undefined) : resolve(stats)
+    })
+  })
+}
+
+/**
+ * Synchronously check if a file exists.
+ */
+function statSync (filename: string): fs.Stats | void {
+  try {
+    return fs.statSync(filename)
+  } catch (e) {
+    return
+  }
+}
+
+/**
+ * Check filesystem stat is a directory.
+ */
+function isFile (stats: fs.Stats | void) {
+  return stats ? (stats as fs.Stats).isFile() || (stats as fs.Stats).isFIFO() : false
+}
+
+/**
+ * Check filesystem stat is a directory.
+ */
+function isDirectory (stats: fs.Stats | void) {
+  return stats ? (stats as fs.Stats).isDirectory() : false
 }
