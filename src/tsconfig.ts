@@ -124,7 +124,10 @@ export function load (cwd: string, filename?: string): Promise<LoadResult> {
     .then<LoadResult>(path => {
       if (path == null) {
         return Promise.resolve<LoadResult>({
-          config: {}
+          config: {
+            files: [],
+            compilerOptions: {}
+          }
         })
       }
 
@@ -140,7 +143,10 @@ export function loadSync (cwd: string, filename?: string): LoadResult {
 
   if (path == null) {
     return {
-      config: {}
+      config: {
+        files: [],
+        compilerOptions: {}
+      }
     }
   }
 
