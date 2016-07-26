@@ -28,7 +28,10 @@ describe('tsconfig', function () {
     },
     {
       args: ['/'],
-      config: {}
+      config: {
+        files: [],
+        compilerOptions: {}
+      }
     },
     {
       args: [TEST_DIR, 'empty'],
