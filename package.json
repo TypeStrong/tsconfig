@@ -1,8 +1,9 @@
 {
   "name": "tsconfig",
   "version": "5.0.3",
-  "description": "Resole and parse `tsconfig.json`, replicating to TypeScript's behaviour",
+  "description": "Resolve and parse `tsconfig.json`, replicating to TypeScript's behaviour",
   "main": "dist/tsconfig.js",
+  "types": "dist/tsconfig.d.ts",
   "files": [
     "dist/",
     "LICENSE",
