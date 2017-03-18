@@ -16,7 +16,7 @@ describe('tsconfig', function () {
   const tests: Test[] = [
     {
       args: [TEST_DIR, 'invalidfile'],
-      error: `Unexpected token s in JSON at position 0`
+      error: parseInt(process.versions.node, 10) > 5 ? 'Unexpected token s in JSON at position 0' : 'Unexpected token s'
     },
     {
       args: [TEST_DIR, 'missing'],
