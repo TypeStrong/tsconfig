@@ -1,8 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import Promise = require('any-promise')
 import stripBom = require('strip-bom')
-import parseJson = require('parse-json')
 import stripComments = require('strip-json-comments')
 
 export interface LoadResult {
@@ -194,7 +192,7 @@ export function parse (contents: string, filename: string) {
     return {}
   }
 
-  return parseJson(data, null, filename)
+  return JSON.parse(data)
 }
 
 /**

@@ -16,7 +16,7 @@ describe('tsconfig', function () {
   const tests: Test[] = [
     {
       args: [TEST_DIR, 'invalidfile'],
-      error: `Unexpected token 's' at 1:1 in ${join(TEST_DIR, 'invalidfile/tsconfig.json')}\nsome random string\n^`
+      error: `Unexpected token s in JSON at position 0`
     },
     {
       args: [TEST_DIR, 'missing'],

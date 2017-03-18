@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": ["es2015"],
     "outDir": "dist",
     "module": "commonjs",
     "declaration": true,
@@ -8,9 +9,8 @@
     "removeComments": true,
     "sourceMap": true
   },
-  "files": [
-    "src/tsconfig.ts",
-    "src/tsconfig.spec.ts",
-    "typings/index.d.ts"
+  "include": [
+    "src/**/*",
+    "typings/**/*"
   ]
 }
