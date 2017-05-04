@@ -5,11 +5,11 @@
 [![Build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
 
-Resolve and parse [`tsconfig.json`](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json), replicating TypeScript's behaviour.
+Resolve and parse [`tsconfig.json`][tsconfig], replicating TypeScript's behaviour.
 
 ## Usage
 
-See the [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/tsconfig.json) for information on setting up `tsconfig.json`.
+See the [TypeScript docs][tsconfig] for information on setting up `tsconfig.json`.
 
 ### API
 
@@ -47,3 +47,4 @@ MIT License
 [travis-url]: https://travis-ci.org/TypeStrong/tsconfig
 [coveralls-image]: https://img.shields.io/coveralls/TypeStrong/tsconfig.svg?style=flat
 [coveralls-url]: https://coveralls.io/r/TypeStrong/tsconfig?branch=master
+[tsconfig]: http://www.typescriptlang.org/docs/handbook/tsconfig-json.html
