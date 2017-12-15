@@ -43,12 +43,12 @@
   },
   "homepage": "https://github.com/TypeStrong/tsconfig",
   "dependencies": {
-    "@types/strip-bom": "^3.0.0",
-    "@types/strip-json-comments": "0.0.30",
     "strip-bom": "^3.0.0",
     "strip-json-comments": "^2.0.0"
   },
   "devDependencies": {
+    "@types/strip-bom": "^3.0.0",
+    "@types/strip-json-comments": "0.0.30",
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.42",
     "@types/node": "^8.0.25",
