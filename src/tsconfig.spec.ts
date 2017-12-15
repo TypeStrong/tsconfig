@@ -98,6 +98,14 @@ describe('tsconfig', function () {
     }
   ]
 
+  describe('package.json', function () {
+    it('should not include @types in dependencies', function () {
+      const deps = require('../package.json').dependencies
+      // tslint:disable-next-line
+      expect(Object.keys(deps).filter((name) => /^@types\//.test(name))).to.be.empty
+    })
+  })
+
   describe('sync', function () {
     tests.forEach(function (test) {
       describe(inspect(test.args), function () {
