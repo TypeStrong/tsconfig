@@ -158,16 +158,28 @@ export function loadSync (cwd: string, filename?: string): LoadResult {
  */
 export function readFile (filename: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    fs.readFile(filename, 'utf8', (err, contents) => {
+    fs.readFile(filename, 'utf8', async (err, contents) => {
       if (err) {
         return reject(err)
       }
 
+      let obj
       try {
-        return resolve(parse(contents))
+        obj = parse(contents)
       } catch (err) {
         return reject(err)
       }
+
+      if (obj.extends !== undefined) {
+        const filepath = filename.replace(path.basename(filename), '')
+        const extendsFilename = resolveSync(filepath, obj.extends) as string
+        const extendsObj = await readFile(extendsFilename)
+        delete obj.extends
+
+        obj = mergeObjects(extendsObj, obj)
+      }
+
+      return resolve(obj)
     })
   })
 }
@@ -177,8 +189,18 @@ export function readFile (filename: string): Promise<any> {
  */
 export function readFileSync (filename: string): any {
   const contents = fs.readFileSync(filename, 'utf8')
+  let obj = parse(contents)
 
-  return parse(contents)
+  if (obj.extends !== undefined) {
+    const filepath = filename.replace(path.basename(filename), '')
+    const extendsFilename = resolveSync(filepath, obj.extends) as string
+    const extendsObj = readFileSync(extendsFilename)
+    delete obj.extends
+
+    obj = mergeObjects(extendsObj, obj)
+  }
+
+  return obj
 }
 
 /**
@@ -229,4 +251,17 @@ function isFile (stats: fs.Stats | void) {
  */
 function isDirectory (stats: fs.Stats | void) {
   return stats ? (stats as fs.Stats).isDirectory() : false
+}
+
+/**
+ * Simple object merging
+ */
+function mergeObjects (target: any, source: any): any {
+  for (let key of Object.keys(source)) {
+    if (source[key] instanceof Object) {
+      Object.assign(source[key], mergeObjects(target[key], source[key]))
+    }
+  }
+  Object.assign(target || {}, source)
+  return target
 }

@@ -1,0 +1,18 @@
+{
+    // Compiler options.
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "rootDirs": [
+            "src"
+        ]
+    },
+    // These are the files to compile with.
+    "files": [
+        "./src/foo.ts" /* Use `foo.ts` */
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist-second",
+        "rootDirs": [
+            "src",
+            "test"
+        ]
+    },
+    "files": [
+        "./src/bar.ts"
+    ]
+}
+
