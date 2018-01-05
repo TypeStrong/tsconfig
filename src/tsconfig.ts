@@ -158,7 +158,7 @@ export function loadSync (cwd: string, filename?: string): LoadResult {
  */
 export function readFile (filename: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    fs.readFile(filename, 'utf8', async (err, contents) => {
+    fs.readFile(filename, 'utf8', (err, contents) => {
       if (err) {
         return reject(err)
       }
@@ -173,7 +173,7 @@ export function readFile (filename: string): Promise<any> {
       if (obj.extends !== undefined) {
         const filepath = filename.replace(path.basename(filename), '')
         const extendsFilename = resolveSync(filepath, obj.extends) as string
-        const extendsObj = await readFile(extendsFilename)
+        const extendsObj = readFileSync(extendsFilename)
         delete obj.extends
 
         obj = mergeObjects(extendsObj, obj)
@@ -262,6 +262,6 @@ function mergeObjects (target: any, source: any): any {
       Object.assign(source[key], mergeObjects(target[key], source[key]))
     }
   }
-  Object.assign(target || {}, source)
+  Object.assign(target, source)
   return target
 }
