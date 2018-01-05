@@ -21,7 +21,7 @@ See the [TypeScript docs][tsconfig] for information on setting up `tsconfig.json
 * **loadSync(cwd: string, path?: string): { path?: string, config: any }** Synchronous `load`.
 * **readFile(filename: string): Promise<any>** Read a JSON file as `tsconfig.json` (strip BOM, parse JSON and support empty contents).
 * **readFileSync(filename: string): any** Synchronous `readFile`.
-* **parse(contents: string, filename: string): any** Parse file contents as `tsconfig.json` (strip BOM, parse JSON and support empty contents).
+* **parse(contents: string): any** Parse file contents as `tsconfig.json` (strip BOM, parse JSON and support empty contents).
 
 ## Contributing
 

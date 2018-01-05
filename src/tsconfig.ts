@@ -164,7 +164,7 @@ export function readFile (filename: string): Promise<any> {
       }
 
       try {
-        return resolve(parse(contents, filename))
+        return resolve(parse(contents))
       } catch (err) {
         return reject(err)
       }
@@ -178,13 +178,13 @@ export function readFile (filename: string): Promise<any> {
 export function readFileSync (filename: string): any {
   const contents = fs.readFileSync(filename, 'utf8')
 
-  return parse(contents, filename)
+  return parse(contents)
 }
 
 /**
  * Parse `tsconfig.json` file.
  */
-export function parse (contents: string, filename: string) {
+export function parse (contents: string) {
   const data = stripComments(stripBom(contents))
 
   // A tsconfig.json file is permitted to be completely empty.
