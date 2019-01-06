@@ -1,0 +1,6 @@
+{
+    "extends": "./tsconfig-second.json",
+    "compilerOptions": {
+        "outDir": "dist-third"
+    }
+}
