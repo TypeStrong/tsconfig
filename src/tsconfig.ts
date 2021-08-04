@@ -185,7 +185,7 @@ export function readFileSync (filename: string): any {
  * Parse `tsconfig.json` file.
  */
 export function parse (contents: string, filename: string) {
-  const data = stripComments(stripBom(contents))
+  const data = stripDanglingComma(stripComments(stripBom(contents)))
 
   // A tsconfig.json file is permitted to be completely empty.
   if (/^\s*$/.test(data)) {
@@ -229,4 +229,66 @@ function isFile (stats: fs.Stats | void) {
  */
 function isDirectory (stats: fs.Stats | void) {
   return stats ? (stats as fs.Stats).isDirectory() : false
+}
+
+/**
+ * replace dangling commas from pseudo-json string with single space
+ *
+ * limitations:
+ * - pseudo-json must not contain comments, use strip-json-comments before
+ * - only a single dangling comma before } or ] is removed
+ *   stripDanglingComma('[1,2,]') === '[1,2 ]
+ *   stripDanglingComma('[1,2,,]') === '[1,2, ]
+ *
+ * implementation heavily inspired by strip-json-comments
+ */
+function stripDanglingComma (jsonString: string) {
+  /**
+   * Check if char at qoutePosition is escaped by an odd number of backslashes preceding it
+   */
+  function isEscaped (jsonString: string, quotePosition: number) {
+    let index = quotePosition - 1
+    let backslashCount = 0
+
+    while (jsonString[index] === '\\') {
+      index -= 1
+      backslashCount += 1
+    }
+
+    return Boolean(backslashCount % 2)
+  }
+  let insideString = false
+  let offset = 0
+  let result = ''
+  let danglingCommaPos = null
+  for (let i = 0; i < jsonString.length; i++) {
+    const currentCharacter = jsonString[i]
+
+    if (currentCharacter === '"') {
+      const escaped = isEscaped(jsonString, i)
+      if (!escaped) {
+        insideString = !insideString
+      }
+    }
+
+    if (insideString) {
+      danglingCommaPos = null
+      continue
+    }
+    if (currentCharacter === ',') {
+      danglingCommaPos = i
+      continue
+    }
+    if (danglingCommaPos) {
+      if (currentCharacter === '}' || currentCharacter === ']') {
+        result += jsonString.slice(offset, danglingCommaPos) + ' '
+        offset = danglingCommaPos + 1
+        danglingCommaPos = null
+      } else if (!currentCharacter.match(/\s/)) {
+        danglingCommaPos = null
+      }
+    }
+  }
+
+  return result + jsonString.substring(offset)
 }

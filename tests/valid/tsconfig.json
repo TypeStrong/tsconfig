@@ -6,10 +6,12 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "outDir": "dist",
-        "sourceMap": true
-    },
+        "sourceMap": true, // regular dangling comma
+    } ,
     // These are the files to compile with.
     "files": [
-        "./src/foo.ts" /* Use `foo.ts` */
+        "./src/foo.ts" /* Use `foo.ts` */ , // dangling comma surrounded with whitespace and comments
     ]
+  // dangling comma on next line
+  ,
 }
