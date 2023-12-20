@@ -95,6 +95,27 @@ describe('tsconfig', function () {
         }
       },
       path: join(TEST_DIR, 'cwd/tsconfig.json')
+    },
+    {
+      args: [TEST_DIR, 'extends/tsconfig-third.json'],
+      config: {
+        compilerOptions: {
+          module: 'commonjs',
+          noImplicitAny: true,
+          outDir: 'dist-third',
+          removeComments: true,
+          sourceMap: true,
+          preserveConstEnums: true,
+          rootDirs: [
+            'src',
+            'test'
+          ]
+        },
+        files: [
+          './src/bar.ts'
+        ]
+      },
+      path: join(TEST_DIR, 'extends/tsconfig-third.json')
     }
   ]
 
